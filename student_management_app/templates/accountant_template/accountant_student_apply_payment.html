@@ -1,0 +1,278 @@
+{% extends 'accountant_template/base_template.html' %}
+
+{% block page_title %}
+    Pay Student Fees
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <!-- <form method="POST" action="{% url 'teacher_add_result_save' %}"> -->
+                    {% csrf_token %}
+                    <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Pay Student Fees</h3>
+                    </div>
+                    <!-- /.card-header -->
+
+                                {% comment %} Display Messages {% endcomment %}
+                                {% if messages %}
+                                <div class="form-group">
+                                <div class="col-12">
+                                    {% for message in messages %}
+                                    {% if message.tags == "error" %}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% elif message.tags == "success" %}
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                                </div>
+                                {% endif %}
+                            
+          
+
+                        <div class="card-body">
+                           
+                            <div class="form-group">
+                                <label>Search </label>
+                                <input type="text" name="coachingIDsearch" placeholder="Search Payments by Coaching ID" id="coachingIDsearch" class="form-control">
+                            </div>
+                        </div>
+                            <!-- /.card-body -->
+                            
+                            <div class="card-footer">
+                                    <button type="submit" class="btn btn-info my-2" id="searchID">Search Payments</button>
+                                    
+                                    <!-- <button type="button" id="fetchStudent" class="btn btn-info" >Fetch Student</button> -->
+                                    <!-- <button type="button" id="fetch_payments" class="btn btn-warning" >Fetch Payments</button> -->
+                                    <!-- <button type="button" class="btn btn-danger reply_open_modal" data-toggle="modal" data-target="#replyModal" id="add_payment">Add Payment</button> -->
+                        
+                       
+                            </div>
+                    </div>
+                </div>
+            </div>
+                    <!-- </form> -->
+                    <!-- /.card -->
+                <div class="row table-ajax">
+                        <div class="col-lg-4 col-6">
+                            <!-- small box -->
+                            <div class="small-box bg-success">
+                              <div class="inner">
+                                
+                                <h3 id="totalFees"></h3>
+                
+                                <p>Total Fees </p>
+                              </div>
+                              <div class="icon">
+                                <i class="ion ion-stats-bars"></i>
+                              </div>
+                              <a href="#" class="small-box-footer"></a>
+                            </div>
+                          </div>
+                          <div class="col-lg-4 col-6">
+                            <!-- small box -->
+                            <div class="small-box bg-info">
+                              <div class="inner">
+                                 
+                                  
+                                  <h3 id="totalPaid"></h3>
+                                  
+                                  
+                                  
+                                <p>Total Paid</p>
+                              </div>
+                              <div class="icon">
+                                <i class="ion ion-stats-bars"></i>
+                              </div>
+                              <a href="#" class="small-box-footer"> </a>
+                            </div>
+                          </div> 
+                          <div class="col-lg-4 col-6">
+                            <!-- small box -->
+                            <div class="small-box bg-danger">
+                              <div class="inner">
+                                
+                                <h3 id="totalDue"></h3>
+                
+                                <p>Total Due</p>
+                              </div>
+                              <div class="icon">
+                                <i class="ion ion-stats-bars"></i>
+                              </div>
+                              <a href="#" class="small-box-footer"></a>
+                            </div>
+                          </div>
+                          
+                          
+                        
+                    </div>
+                    <div class="row">
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-1">
+                                <thead class="thead bg-dark">
+                                <tr>
+                                    <th  colspan="8" style="text-align: center;">
+
+                                        Payment Details
+                                    </th>
+                                </tr>
+                                <tr class="bg-light">
+                                    <th>#ID</th>
+                                    <th>Student Name</th>
+                                    <th>Username</th>
+                                    <th>Fees Title</th>
+                                    <th>Amount</th>
+                                    <th>Paid At</th>
+                                    <th>Download</th>
+                                </tr>
+                                </thead>
+
+
+
+                                <tbody>
+                                    {% for payment in payment_details %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td>{{ payment.student_id.admin.first_name }} {{ payment.student_id.admin.last_name }}</td>
+                                        <td>{{ payment.student_id.admin.username}}</td>
+                                        <td>{{payment.fees_title}}</td>                
+                                        <td>{{payment.amount}}</td>
+                                        <td>{{payment.paid_at}}</td>
+                                        <td><a href="{% url 'accountant_download-invoice' payment.id %}">Paid <i class='fas fa-file-pdf'></i> <sub>Download</sub></a></td>
+                                    </tr>
+                                    {% endfor %}
+
+                                </tbody>
+
+        
+                            </table> 
+                            <table class="table table-ajax">
+                                 <thead class="thead bg-info">
+                                 <tr>
+                                     <th id ="paymentheader" colspan="7" style="text-align: center;">
+
+                                         
+                                     </th>
+                                 </tr>
+                                 <tr class="bg-light">
+                                    <th>#SL</th> 
+                                    <!--<th>Payment ID</th>-->
+                                     <th>Fees Title</th>
+                                     <th>Amount</th>
+                                     <th>Paid At</th>
+                                     <th>Status</th>
+                                     
+                                 </tr>
+                                 </thead>
+
+
+
+                                 <tbody id="fees_det">
+
+
+                                 </tbody>
+
+         
+                             </table>
+                         </div>
+                     </div>
+
+
+                </div>
+            </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+      {% comment %} Modal to Reply Feedback {% endcomment %}
+
+  {% endblock main_content %}
+
+{% block custom_js %}
+
+<script>
+    $(document).ready(function(){
+        $(".table-ajax").hide();
+        $(".table-1").show();
+        
+        $("#searchID").click(function(){
+
+            // Displaying Students Based on teacher, Course and Session Enrolled
+
+            let coachingIDsearch = $("#coachingIDsearch").val();
+            
+            let output="";
+            
+
+            
+            $.ajax({
+                    url:"{% url 'accountant_get_student_payment' %}",
+                    type:'POST',
+                    data:{coachingIDsearch:coachingIDsearch},
+                    dataType: "json",
+
+                    success: function(data){
+                        $(".table-ajax").show()
+                        $(".table-1").hide();
+                        
+                        
+                        if(data.status == "Done"){
+                            let x = data.fees_details;
+                            
+                            for(i=0;i<x.length; i++){
+                                output += "<tr><td>"+parseInt(i+1)+"</td><td>"+ x[i].fees_title +"</td><td>"+x[i].amount + "</td><td> " +x[i].paid_at+"</td>";
+                                if (x[i].paid_status == 1){
+                                 output +=   "<td><a href='/accountant_download-invoice/"+x[i].id+"'>Paid <i class='fas fa-file-pdf'></i> <sub>Download</sub></a></td></tr>";
+                                }
+                                else{
+                                    output += "<td><a href='/accountant_add_student_payment/"+x[i].id+"/' class='btn btn-danger'>Pay Now</td></tr>"
+                                }
+                                
+                            }
+                            
+                            $("#fees_det").html(output);
+                            
+                            $("#totalFees").html(data.totalFeesList);
+                            $("#totalPaid").html(data.totalPaidList);
+                            $("#totalDue").html(data.totalDue);
+                            $("#paymentheader").html("Payment Details Of : <span class='text-warning'>"+data.adminList[0].first_name+" "+data.adminList[0].last_name+"("+data.adminList[0].username+")</span>");
+
+                            
+                            
+                        }
+
+                        else{
+                           alert("something is wrong");
+                        }
+                    },
+            });
+        });
+    });
+  
+    
+    
+    
+        
+</script>
+{% endblock custom_js %}

@@ -1,0 +1,279 @@
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Result
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+
+<section class="content">
+        <div class="container-fluid">
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-dark">
+                        <div class="card-header">
+
+
+                            <h3 class="card-title">Result</h3>
+                        </div>
+                        <div class="card-body">
+   
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <input type="search" placeholder="Coaching ID" class="form-control" name="coachingID" id="coachingID">
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="row">
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-primary ml-1 " id="fetch_students">Fetch Student</button>
+                                    </div>
+                            </div>
+                        <div class="card-footer STUDENTS">
+                            <div class="row secondInput">
+
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>Students</label>
+                                        <div id="studentName"></div>
+                                        
+                                        
+                                    </div>
+                                </div>
+                            
+                            
+                            
+                                
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>Start Date <span class="badge badge-primary" id="bttnToday">Today</span>
+                                        </label>
+                                        <form method="POST" action="{% url 'download_student_report_card' %}">
+                                    <input type="date" id="inputVal" class="form-control" name="start_date" />
+                                </div>
+                            </div>
+                            <input type="hidden" name="student_id" id="student_id_value">
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label>End Date<span class="badge badge-primary" id="bttn2Today">Today</span>
+                                    </label>
+                                    <input type="date" id="inputVal2" class="form-control" name="end_date" />
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-primary" id="fetch_data">Fetch Details</button>
+                            <button type="submit" class="btn btn-danger mx-2" id="download">Download Details</button>
+                        </form>
+                    </div>
+
+                    </div>
+
+
+                    </div>
+
+                
+
+
+
+                       
+                    <div class="card-body TableDate">
+                        <div class="table-responsive">
+                             <table id="filteredTable" class="table">
+                               
+                                
+
+
+                                 <table id="shortResult" class='table'>
+                                     
+
+                                 </table>
+                             </table>
+                        </div>
+                             
+                     </div>
+
+
+ 
+ 
+ 
+  
+
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /.container-fluid -->
+  </section>
+
+{% endblock main_content %}
+
+{% block custom_js %}
+<script>
+    setInterval(function() {
+    
+
+        var oM = $('.oM');
+        var tM = $('.tM');
+        
+        var totaltM = 0;
+        var totaloM = 0;
+        $.each(oM, function (i, OM ) {
+            var om = $(this).text();
+            
+            totaloM = totaloM + parseInt(om, 10);
+            
+        });
+        $.each(tM, function (i, TM ) {
+            var tm = $(this).text();
+            
+            totaltM = totaltM + parseInt(tm, 10);
+            
+        });
+        $('.totaloM').text(totaloM);
+        $('.totaltM').text(totaltM);
+
+    
+    },1000);
+</script>
+
+<script>
+  $(document).ready(function(){
+    //   $("#download").click(function(){
+    //     $.ajax({
+    //             url:"{% url 'get_student_by_coaching_id' %}",
+    //             type:'POST',
+    //             data:{start_date:start_date , student_id:students, end_date:end_date},
+    //             dataType: "json",
+
+    //             success: function(data){}
+    //     });
+
+    //   });
+        $(".STUDENTS").hide();
+        $("#fetch_students").click(function(){
+
+            // Displaying Students Based on Staff, class and Session Enrolled
+
+            var coachingID=$("#coachingID").val();
+            var output = "";
+
+            $.ajax({
+                url:"{% url 'get_student_by_coaching_id' %}",
+                type:'POST',
+                data:{coachingID:coachingID},
+                dataType: "json",
+
+                success: function(data){
+                    $(".STUDENTS").show()
+                    if(data.status == "save"){
+                                let x = data.details;
+                                
+
+                                
+                                    output += "<input disabled class='form-control' name='name' value='"+x[0].name+"'/>";
+                                    output += "<input type='hidden' name='student_id' id='student_id' value='"+x[0].id+"'>"
+                                
+                                $("#studentName").html(output);
+                                let students = $("#student_id").val()
+                                $("#student_id_value").val(students);
+                                console.log(x[0].name);
+                                
+                    
+                                
+                            }
+
+                    else{
+                           alert("something is wrong");
+                        }
+                    }
+            })
+
+            
+            
+        });    
+    
+
+
+        $(".TableDate").hide()
+        $("#fetch_data").click(function(){
+                
+                let start_date = $("#inputVal").val()
+                let end_date = $("#inputVal2").val()
+                let students = $("#student_id").val()
+                
+                let output="";
+                let output2="";
+
+                $.ajax({
+                    url:"{% url 'get_student_report' %}",
+                    type:'POST',
+                    data:{start_date:start_date , student_id:students, end_date:end_date},
+                    dataType: "json",
+
+                    success: function(data){
+                        $(".TableDate").show();
+                        $(".table-hide").hide();
+                        if(data.status == "OK"){
+                            
+                            
+                            let a = data.totalMarksVal;
+                            let b = data.obtainedMarksVal;
+                            let x = data.student_result_data;
+                            let y = data.examinations_data;
+                            let z = data.list1;
+                            let xy = data.list2;
+                            let totalMarksIDlist = data.totalMarksIDList;
+                            let tmlist = data.tmlist;
+                            let subjectNamelist = data.subjectNamelist;
+
+                            for(k=0;k<y.length;k++){
+                                output += "<thead class='thead-dark'><tr><th colspan='2' style='text-align:center'>"+y[k].exam_name+"</th>"
+                                        
+                                            if(totalMarksIDlist[k] == y[k].id){
+                                            output += "<th style='text-align:center' colspan='3'></th></tr></thead><thead><tr><th>#ID</th><th>Subject</th><th>Total Marks</th><th>Obtained Marks</th><th>status</th></tr>";
+                                        }
+                                        
+                                for(i=0;i<x.length; i++){
+                                    
+                                    if(z[i]==y[k].id){
+                                    output += "<tr><td>"+ parseInt(i+1) +"</td><td>"+subjectNamelist[i]+"</td><td class='tM'>"+x[i].subject_assignment_marks+"</td><td class='oM'>"+x[i].subject_exam_marks+"</td><td>"+x[i].gpa+"</td></tr>";
+                                    }
+                                }
+                        }
+                            
+                            output2 += "<thead class='thead-dark'><tr><th rowspan='2' colspan='2'> <span class='totaloM' > </span> / <span class='totaltM'></span></th><th>Working Days:"+ xy[0] +"</th><th>Present:"+ xy[1]+"</th><th>Absent:"+ xy[2] +"</th></tr></thead></table>"
+                            
+                            $("#filteredTable").html(output);
+                            $("#shortResult").html(output2);
+
+                            
+                          
+                            
+                            
+                          
+
+
+                        }
+                        
+
+                       
+                    },
+                    
+                });
+
+            });
+
+    });
+
+
+
+</script>
+
+{% endblock custom_js %}

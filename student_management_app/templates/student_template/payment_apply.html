@@ -1,0 +1,401 @@
+{% extends 'student_template/base_template.html' %}
+
+{% block page_title %}
+    Apply for Payment
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row ">
+                        <div class="col-lg-4 col-6">
+                            <!-- small box -->
+                            <div class="small-box bg-success">
+                              <div class="inner">
+                                
+                                <h3 id="totalFees">৳ {{ totalFees }}</h3>
+                
+                                <p>Total Fees </p>
+                              </div>
+                              <div class="icon">
+                                <i class="ion ion-stats-bars"></i>
+                              </div>
+                              <a href="#" class="small-box-footer"></a>
+                            </div>
+                          </div>
+                          <div class="col-lg-4 col-6">
+                            <!-- small box -->
+                            <div class="small-box bg-info">
+                              <div class="inner">
+                                 
+                                  
+                                  <h3 id="totalPaidPayment">৳ {{ totalPaidPayment }} </h3>
+                                  
+                                  
+                                  
+                                <p>Total Paid</p>
+                              </div>
+                              <div class="icon">
+                                <i class="ion ion-stats-bars"></i>
+                              </div>
+                              <a href="#" class="small-box-footer"> </a>
+                            </div>
+                          </div> 
+                          <div class="col-lg-4 col-6">
+                            <!-- small box -->
+                            <div class="small-box bg-danger">
+                              <div class="inner">
+                                
+                                <h3 id="totalDue">৳ {{ totalDue }}</h3>
+                
+                                <p>Total Due</p>
+                              </div>
+                              <div class="icon">
+                                <i class="ion ion-stats-bars"></i>
+                              </div>
+                              <a href="#" class="small-box-footer"></a>
+                            </div>
+                          </div>
+                          
+                          
+                        
+                    </div>
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <!-- <div class="card-header">
+                            <h3 class="card-title">Apply For Payment</h3>
+                        </div> -->
+                        <!-- /.card-header -->
+                        
+                        {% comment %} Display Messages {% endcomment %}
+                        {% if messages %}
+                        <div class="form-group">
+                            <div class="col-12">
+                                {% for message in messages %}
+                                {% if message.tags == "error" %}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                            {{ message }}
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    {% elif message.tags == "success" %}
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+
+                            
+                    </div>
+                    <!-- /.card -->
+
+
+
+                </div>
+            </div>
+                            <div class="form-group">
+                                <input type="date" class="form-control" id="inputVal" />
+                            </div>
+                            
+                            <div class="form-group">
+                                <input type="date" class="form-control" id="inputVal2" />
+                                <input type="submit" class="btn btn-danger my-2" id="fetch_details" />
+                            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">Payment Apply History</h3>
+                        
+                            
+                        </div>
+
+                        <div class="card-body">
+                           <div class="table-responsive">
+                                <table class="table django-table">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        
+                                        <th>Invoice No.</th>
+                                        <th>Fees Info</th>
+                                        <th>Amount</th>
+                                        <th>Payment Method</th>
+                                        <th>Bkash Number</th>
+                                        <th>Transaction ID</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for payment in payment_data %}
+                                    <tr>
+                                        
+                                        <td>#AAIN<span>{{ payment.id }}</span></td>
+                                        <td>{{ payment.fees_title }}</td>
+                                        <td>{{ payment.amount }} ৳</td>
+                                        {% if payment.action != 1 %}
+                                            <td colspan="3" style="text-align: center;"></td>
+                                        {% else %}
+                                            {% if payment.in_cash == 0 %}
+                                                <td colspan="3" >In Cash</td>
+                                            {% elif payment.in_cash == 1 %}
+                                                <td>bKash</td>
+                                                <td>{{ payment.bkash_nmb }}</td>
+                                                <td>{{ payment.trans_id }}</td>
+                                            {% endif %}
+                                        {% endif %}
+                                        
+                                        <td>
+                                            {% if payment.action == 0 %}
+                                            <button class="btn btn-warning payment_open_modal" data-toggle="modal" data-target="#addPaymentButton"> +  Pay  Now</button>
+                                            {% elif payment.action == 1 %}
+                                                <span class="alert alert-success">Paid!</span>
+                                            {% elif payment.action == 2 %}
+                                                <a disabled class="btn btn-danger my-2">Rejected!</a>
+                                                <!-- <button disabled="disabled" class="btn btn-warning">Rejected</button> -->
+                                                <br>
+                                                <button class="btn btn-warning payment_open_modal mb-2" data-toggle="modal" data-target="#addPaymentButton">Pay Again...</button>
+                                            {% elif payment.action == 3 %}
+                                                <span class="alert alert-info">Pending...</span>
+                                            {% endif %}
+                                        </td>
+                                        
+                                        
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                    
+                        
+                
+                                </table>
+                                <table class="table ajax-table">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th>Invoice No.</th>
+                                        <th>Pay Upto</th>
+                                        <th>Amount</th>
+                                        <th>Payment Method</th>
+                                        <th>Bkash Number</th>
+                                        <th>Transaction ID</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="ajaxx">
+                                        
+                                    </tbody>
+                                    </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+<!-- Modal -->
+<div class="modal fade" id="addPaymentButton" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Pay Fees</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Fees Title : </p>
+                <input class="form-control" disabled id="titleOfFees" />
+                <p>Fees Amount : </p>
+                <input class="form-control" disabled id="amountOfFees" />
+                <input type="hidden" id="payment_id" name="payment_id" />
+                <p class="bkash_nmb">Bkash Number : </p>
+                <input type="text" name="bkash_nmb" id="bkash_nmb" class="form-control bkash_nmb" />
+                <p class="trans_id">Transaction ID :</p>
+                <input type="text" name="trans_id" id="trans_id" class="form-control trans_id">
+                <input type="checkbox" name="in_cash" id="in_cash" class="checkbox_check" />  Payment In Cash
+    
+        </div>
+        <div class="modal-footer">
+            {% comment %} <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> {% endcomment %}
+            <button type="button" class="btn btn-primary btn-block" id="requestButton"> <b>+</b> Place Payment</button>
+        </div>
+        </div>
+    </div>
+    </div>
+  {% endblock main_content %}
+
+{% block custom_js %}
+<script>
+    
+    $(document).ready(function(){
+        $(".django-table").show()
+        $(".ajax-table").hide()
+    $("#fetch_details").click(function(){
+                
+                let start_date = $("#inputVal").val()
+                let end_date = $("#inputVal2").val()
+                
+                
+                            let output="";
+
+                $.ajax({
+                    url:"{% url 'student_get_payment_date' %}",
+                    type:'POST',
+                    data:{start_date:start_date , end_date:end_date},
+                    dataType: "json",
+
+                    success: function(data){
+                        
+                        if(data.status == "OK"){
+                            $(".django-table").hide()
+                            $(".ajax-table").show()
+                            
+                            let x = data.payments;
+                            
+                                for(i=0;i<x.length; i++){
+                                    
+                                    output += "<tr><td>#AAIN"+x[i].id+"</td><td>"+x[i].fees_title+"</td><td>"+x[i].amount+" ৳</td>";
+                                    if (x[i].action != 1){
+                                        output += "<td colspan='3' style='text-align: center;'></td><td><span class='alert alert-danger'>Unpaid</span></td></tr>";
+                                    }
+                                    
+                                    else{
+                                        if (x[i].in_cash == 0){
+                                            output += "<td colspan='2' >In Cash</td><td><td><span class='alert alert-success'>Paid</span></td></tr>";
+                                        }
+                                        else{
+                                            output += "<td>bKash</td><td>"+ x[i].bkash_nmb +"</td><td>"+ x[i].trans_id +"</td><td><span class='alert alert-success'>Paid</span></td></tr>";
+                                        }
+                                    }
+                                    
+                                    // if(x[i].action == 0){
+                                    //     output += "<button class='btn btn-warning payment_open_modal' data-toggle='modal' data-target='#addPaymentButton'> +  Pay  Now</button></td></tr>";
+                                    // }
+                                    // else if(x[i].action == 1){
+                                    //     output += "<span class='alert alert-success'>Paid!</span></td></tr>";
+                                    // }
+                                    // else if(x[i].action == 2){
+                                    //     output += "<a disabled class='btn btn-danger my-2'>Rejected!</a><br><button class='btn btn-warning payment_open_modal mb-2' data-toggle='modal' data-target='#addPaymentButton'>Pay Again...</button></td></tr>";
+                                    // }
+                                    // else if(x[i].action == 3){
+                                    //     output += "<span class='alert alert-info'>Pending...</span></td></tr>";
+                                    // }
+
+                                }
+
+                                
+                        }
+                            
+                            
+                            $("#totalDue").html(data.totalDue+"৳");
+                            $("#totalPaidPayment").html(data.totalPaidPayment+"৳");
+                            $("#totalFees").html(data.totalFees+"৳");
+                            $("#ajaxx").html(output);
+                            
+                                        
+                            
+                        },
+                        
+
+                    
+                
+                });
+
+                    
+                    
+                
+
+            });    
+        
+        
+        $(".payment_open_modal").click(function(){
+            // Getting Value from Table
+            var id = $(this).parents("tr").children("td:eq(0)").children("span").text(); //Getting Selected Row ID (Frist Column)
+            var title = $(this).parents("tr").children("td:eq(1)").text(); //Getting Selected Name (3rd Column)
+            var amount = $(this).parents("tr").children("td:eq(2)").text()
+
+            
+            // Adding the Value from Table to Modal form
+            $("#payment_id").val(id);
+            $("#titleOfFees").val(title);
+            $("#amountOfFees").val(amount);
+        });
+        $(document).on("click", "#addPaymentButton", function(){
+            if ($('input.checkbox_check').is(':checked')) {
+                $(".bkash_nmb").hide();
+                $(".trans_id").hide();
+                // console.log("jsfcdsjnfjd");
+            }
+            else {
+                $(".bkash_nmb").show();
+                $(".trans_id").show();
+            }
+        });
+
+        $(document).on("click", "#requestButton", function () {
+           
+            $(this).attr("disabled", "disabled")
+                $(this).text("Requesting Payment...")
+
+                //console.log("SAVE")
+                let payment_id = $("#payment_id").val();
+                
+                if ($('input.checkbox_check').is(':checked')) {
+                    var in_cash = 0;
+                    var bkash_nmb = 0;
+                    var trans_id = 0;
+
+                }
+                else{
+                    var in_cash = 1;
+                    var trans_id=$("#trans_id").val();
+                    var bkash_nmb=$("#bkash_nmb").val();
+
+                }
+
+                // Saving Attendance Data into Database
+
+                $.ajax({
+                    url:"{% url 'student_apply_payment_save' %}",
+                    type:'POST',
+                    data:{in_cash:in_cash , payment_id:payment_id , trans_id:trans_id , bkash_nmb:bkash_nmb},
+                })
+
+                
+                .done(function(response){
+                    
+                    if(response=="True")
+                    {
+                        alert("Requested For Payment!")
+                    }
+                    else
+                    {
+                        alert("Failed to Add Payment!")
+                    }
+                    location.reload()
+                    
+                    //console.log(response)
+                })
+
+                .fail(function(){
+                    alert("Error in Adding Payment .")
+                })
+
+         })
+})
+</script>
+{% endblock custom_js %}

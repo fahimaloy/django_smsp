@@ -1,0 +1,85 @@
+{% extends 'student_template/base_template.html' %}
+
+{% block page_title %}
+    Online Class
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Online Class</h3>
+                    </div>
+                    <!-- /.card-header -->
+
+
+                            
+                    <!-- <form method="POST" action="{% url 'student_apply_payment_save' %}"> -->
+                                    
+            
+                                    <div class="card-body">
+                                       <div class="table-responsive">
+                                            <table class="table">
+                                                <thead class="thead-light">
+                                                <tr>
+                                                    <th>#SL</th>
+                                                    <th>Class Title</th>
+                                                    <th>Teacher</th>
+                                                    <th>Action</th>
+                                                    
+                                                    
+                                                </tr>
+                                                </thead>
+                                                
+                                                
+                                                {% for oc in online_class %}
+                                                <tr>
+                                                    <td>{{ forloop.counter }}</td>
+                                                    <td>{{ oc.online_class_name }}</td>
+                                                    <td>{{ oc.teacher_id.first_name }} {{ oc.teacher_id.last_name }}</td>
+                                                    <td>
+                                                        <a href="{{oc.online_class_link}}" class="btn btn-primary"> Join </a>
+                                                    </td>
+                                                    
+                                                </tr>
+                                                {% endfor %}
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <!-- /.card-body -->
+            
+                                
+
+                            
+
+                        </div>
+                        <!-- /.card-body -->
+
+
+
+                    </div>
+                    <!-- /.card -->
+
+
+
+                </div>
+            </div>
+
+
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+  {% endblock main_content %}
+
+{% block custom_js %}
+
+{% endblock custom_js %}

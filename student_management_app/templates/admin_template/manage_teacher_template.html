@@ -1,0 +1,176 @@
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Manage teacher
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+            {% if messages %}
+            <div class="form-group">
+            <div class="col-12">
+                {% for message in messages %}
+                {% if message.tags == "error" %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                {% elif message.tags == "success" %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            </div>
+            {% endif %}
+            
+            <div class="row">
+                <div class="col-3">
+
+                    <a class="btn btn-primary" href="{% url 'add_teacher' %}" role="button">+ Add teacher</a> <br/>&nbsp;
+                </div>
+                <div class="col-3"   id="activeButton" >
+                    
+                    <button class="btn btn-info">Active Teachers</button> <br/>&nbsp;
+                </div>
+                <div class="col-3" id="deactiveButton">
+                    
+                    <button class="btn btn-dark">Deactivated Teachers</button> <br/>&nbsp;
+                </div>
+            </div>
+
+            
+
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">teacher Details</h3>
+
+                            <div class="card-tools">
+                            <div class="input-group input-group-sm" style="width: 150px;">
+                                <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+
+                                <div class="input-group-append">
+                                <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body table-responsive p-0">
+                            <table class="table table-hover text-nowrap">
+                            <thead>
+                                <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Address</th>
+                                <th>Last Login</th>
+                                <th>Date Joined</th>
+                                <th>Active Status</th>
+                                <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activeStudents">
+                                {% for teacher in teachers %}
+                                {% if teacher.active_status == True %}
+                                <tr>
+                                
+                                <td>{{ forloop.counter }}</td>
+                                <td><a href="{% url 'manage_teacher_single' teacher.id %}">{{ teacher.admin.first_name }} {{ teacher.admin.last_name }}</a></td>
+                                
+                                <td>{{ teacher.admin.username }}</td>
+                                <td>{{ teacher.admin.email }}</td>
+                                <td>{{ teacher.address }}</td>
+                                <td>{{ teacher.admin.last_login }}</td>
+                                <td>{{ teacher.admin.date_joined }}</td>
+                                <td>
+                                    <a href="{% url 'deactivate_teacher' teacher.admin.id %}" class="btn btn-dark">Deactivate</a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'edit_teacher' teacher.admin.id %}" class="btn btn-success">Edit</a> 
+                                    <a href="{% url 'delete_teacher' teacher.admin.id %}" class="btn btn-danger">Delete</a>
+                                </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                                
+                            </tbody>
+                            <tbody id="deactiveStudents">
+                                {% for teacher in teachers %}
+                                {% if teacher.active_status == False %}
+                                <tr>
+                                
+                                <td>{{ forloop.counter }}</td>
+                                <td><a href="{% url 'manage_teacher_single' teacher.id %}">{{ teacher.admin.first_name }} {{ teacher.admin.last_name }}</a></td>
+                                
+                                <td>{{ teacher.admin.username }}</td>
+                                <td>{{ teacher.admin.email }}</td>
+                                <td>{{ teacher.address }}</td>
+                                <td>{{ teacher.admin.last_login }}</td>
+                                <td>{{ teacher.admin.date_joined }}</td>
+                                <td>
+                                    <span aria-disabled="true"  class="btn btn-danger">Deactivated</span> 
+                                    <a href="{% url 're_activate_teacher' teacher.admin.id %}" class="btn btn-success m-2">Re activate</a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'edit_teacher' teacher.admin.id %}" class="btn btn-success">Edit</a> 
+                                    <a href="{% url 'delete_teacher' teacher.admin.id %}" class="btn btn-danger">Delete</a>
+                                </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                                
+                            </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                        </div>
+                    <!-- /.card -->
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+  {% endblock main_content %}
+  {% block custom_js %}
+<script>
+    $(document).ready(function(){
+        $("#activeStudents").show();
+        $("#deactiveStudents").hide();
+        $("#activeButton").hide();
+        $("#deactiveButton").show();
+        $("#activeButton").click(function(){
+            $("#activeStudents").show();
+            $("#deactiveStudents").hide();
+            $("#activeButton").hide();
+            $("#deactiveButton").show();
+        })
+        $("#deactiveButton").click(function(){
+            $("#activeStudents").hide();
+            $("#deactiveButton").hide();
+            $("#activeButton").show();
+            $("#deactiveStudents").show();
+        })
+
+    });
+</script>
+  {% endblock custom_js %}

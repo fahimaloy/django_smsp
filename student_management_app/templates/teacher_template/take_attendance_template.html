@@ -1,0 +1,241 @@
+{% extends 'teacher_template/base_template.html' %}
+
+{% block page_title %}
+    Take Attendance
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Take Attendance</h3>
+                    </div>
+                    <!-- /.card-header -->
+
+                                {% comment %} Display Messages {% endcomment %}
+                                {% if messages %}
+                                <div class="form-group">
+                                <div class="col-12">
+                                    {% for message in messages %}
+                                    {% if message.tags == "error" %}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% elif message.tags == "success" %}
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                                </div>
+                                {% endif %}
+                            
+
+                        <div class="card-body">
+                           
+                            <div class="form-group">
+                                <label>Class </label>
+                                <select class="form-control" name="classes" id="classes">
+                                    <option value=""> ------------ </option>
+                                    {% for cls in classes %}
+                                        <option value="{{ cls.id }}">{{ cls.class_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Batch  </label>
+
+                                <select class="form-control" name="batch" id="batch">
+                                    <option value=""> ------------ </option>
+                                    
+                                </select>
+                            </div>
+                            <div class='form-group'><label>Attendance Date: </label>
+                                <p> <input type='date' name='attendance_date' id='attendance_date' class='form-control' /></p>
+                            </div>
+
+
+                        </div>
+                        <!-- /.card-body -->
+
+                        <div class="card-footer">
+                        <button type="button" class="btn btn-primary" id="fetch_student">Fetch Student</button>
+                        </div>
+
+                        {% comment %} Displaying Students Here {% endcomment %}
+
+                        <div class="card-footer" id="student_data">
+                        </div> 
+
+                    </div>
+                    <!-- /.card -->
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+      <!-- <p>Date: <input type="text" id="dd"></p> -->
+  {% endblock main_content %}
+
+{% block custom_js %}
+
+<script>
+    $("#classes").change(function () {
+        // get the url of the `load_cities` view
+      var class_id = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: "{% url 'load_batch' %}",   
+        type:'POST',
+        data: {
+          'classes': class_id ,     // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+            let x = data.batchJson ; 
+            
+            let output = "" ;
+            for(i=0;i<x.length; i++){
+                output += "<option value='"+x[i].id+"'>"+x[i].batch_name+"</option>";
+            }
+            $("#batch").html(output);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+    $(document).ready(function(){
+    
+            
+        
+
+        $("#fetch_student").click(function(){
+
+            // Displaying Students Based on Staff, Course and Session Enrolled
+
+            var subject_id=$("#subject").val()
+            var date = $("#attendance_date").val()
+            var class_id=$("#classes").val()
+            var batch=$("#batch").val()
+            $.ajax({
+                url: "{% url 'check_attendance_exist' %}",
+                type: 'POST',
+                data: { date : date,class_id:class_id,batch:batch }
+            })
+                .done(function (response) {
+                    //console.log(response);
+
+                    if (response == "True") {
+                        $(".username_error").remove();
+                        $("<span class='username_error' style='color: red; padding: 5px; font-weight: bold;'> Attendance has already been taken for this Credentials </span>").insertAfter("#attendance_date")
+                    }
+                    else {
+                        $(".username_error").remove();
+                        $("<span class='username_error' style='color: green; padding: 5px; font-weight: bold;'> Go Ahead. </span>").insertAfter("#attendance_date")
+                        $.ajax({
+                            url: "{% url 'get_students' %}",
+                            type: 'POST',
+                            data: { class_id: class_id, batch: batch },
+                        })
+
+
+                            .done(function (response) {
+                                var json_data = JSON.parse(response);
+                                console.log(json_data)
+                                //Displaying Attendance Date Input and Students Attendance
+                                // var div_data="<div class='form-group'><label>Attendance Date: </label><p> <input type='text' name='attendance_date' id='attendance_date' class='form-control' /></p></div>"
+                                var div_data = "<div class='form-group'><div class='row'>"
+
+                                for (key in json_data) {
+                                    div_data += "<div class='col-lg-2'><div class='form-check'><input type='checkbox' checked='checked' name='student_data[]' value='" + json_data[key]['id'] + "' />  <label class='form-check-label'>" + json_data[key]['name'] + " </label></div></div> ";
+
+                                }
+                                div_data += "</div></div>";
+                                div_data += "<div class='form-group'>";
+                                div_data += "<button id='save_attendance' class='btn btn-success' type='button'>Save Attendance Data</button>";
+                                div_data += "</div>";
+                                $("#student_data").html(div_data);
+
+                            })
+                            .fail(function () {
+                                alert("Error in Fetching Students.")
+                            })
+                    }
+                })
+
+            
+
+            // Save Attendance Data to Database
+            $(document).on("click", "#save_attendance", function(){
+                
+                //Disabling the Button while data is being saved in Server
+                $(this).attr("disabled", "disabled")
+                $(this).text("Saving Attendance Data...")
+
+                //console.log("SAVE")
+                var student_data=$("input[name='student_data[]'").map(function(){ 
+                        if($(this).is(":checked")){
+                            return {"id":$(this).val(), "status":1}; // Getting ID and Value of Students
+                        }
+                        else
+                        {
+                            return {"id":$(this).val(), "status":0}; // Getting ID and Value of Students
+                        }
+                    }).get()
+                var attendance_date=$("#attendance_date").val();
+                var subject_id=$("#subject").val();
+                var batch_id=$("#batch").val();
+                var class_id=$("#classes").val();
+                //console.log(attendance_date)
+                //console.log(student_data);
+                student_data = JSON.stringify(student_data)
+
+                // Saving Attendance Data into Database
+
+                $.ajax({
+                    url:"{% url 'save_attendance_data' %}",
+                    type:'POST',
+                    data:{student_ids:student_data, attendance_date:attendance_date,classes:class_id, subject_id:subject_id, batch_id:batch_id},
+                })
+
+                
+                .done(function(response){
+                    
+                    if(response=="OK")
+                    {
+                        alert("Attendance Saved!")
+                    }
+                    else
+                    {
+                        alert("Failed to Save Attendance!")
+                    }
+                    location.reload()
+                    
+                    //console.log(response)
+                })
+
+                .fail(function(){
+                    alert("Error in Saving Students Attendance Data.")
+                })
+
+            })
+
+        })
+    })
+</script>
+{% endblock custom_js %}

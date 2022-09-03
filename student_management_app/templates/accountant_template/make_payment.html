@@ -1,0 +1,148 @@
+{% extends 'accountant_template/base_template.html' %}
+
+{% block page_title %}
+    Apply for Payment
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Apply Payment For {{payment.fees_title}}</h3>
+                        </div>
+                        <!-- /.card-header -->
+                    
+                        <div class="card-body">
+                           
+                            <input type="hidden" name="payment_id" id="payment_id" value="{{payment.id}}">
+                            <div class="form-group">
+                                <label> Fees Title</label>
+                                <input disabled class="form-control" value="{{payment.fees_title}}" >
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Amount</label>
+                                
+                                <input disabled class="form-control" value="{{payment.amount}}" >
+                            </div>
+                            <!-- <div class="form-group" id="shown">
+                                <button class="btn btn-info" id="addPayment"> <b>+</b> Add Payment Details </button>
+                            </div> -->
+                            
+                            <div id="hidden">
+                                <div class="form-group">
+
+                                    <input type="checkbox" name="in_cash" id="in_cash" class="checkbox_check" />  Payment In Cash<sub>?</sub>
+                                </div>
+                                
+                                <div class="form-group bkash_nmb">
+                                    <label>bKash Number</label>
+                                    <input type="text" name="bkash_nmb" id="bkash_nmb" class="form-control" placeholder="bKash Number">
+                                </div>
+                                <div class="form-group trans_id">
+                                    <label>Transaction ID</label>
+                                    <input type="text" name="trans_id" id="trans_id" class="form-control" placeholder="Transaction ID">
+                                </div>
+
+
+
+                                <div class="card-footer">
+                                <button type="submit" id="submit" class="btn btn-primary">Apply for Payment</button>
+                                </div>
+                            </div>
+                            <!-- /.card-body -->
+
+
+                        </div>
+                    
+
+                    </div>
+                    <!-- /.card -->
+
+
+
+                </div>
+            </div>
+
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+  {% endblock main_content %}
+
+{% block custom_js %}
+<script>
+setInterval(function(){
+     
+if(document.getElementById('in_cash').checked) {
+    $(".trans_id").hide();
+    $(".bkash_nmb").hide();
+}
+ 
+    else {
+        $(".bkash_nmb").show();
+        $(".trans_id").show();
+        console.log("Check box is Unchecked");
+    }
+},300);
+
+$(document).on("click", "#submit", function(){
+    //Disabling the Button while data is being saved in Server
+    $(this).attr("disabled", "disabled")
+    $(this).text("Requesting Payment...")
+    let payment_id = $("#payment_id").val();
+    if ($('input.checkbox_check').is(':checked')) {
+        var in_cash = 0;
+        var bkash_nmb = 0;
+        var trans_id = 0;
+        
+    }
+    else{
+        var in_cash = 1;
+        var trans_id=$("#trans_id").val();
+        var bkash_nmb=$("#bkash_nmb").val();
+        
+    }
+    console.log(in_cash)
+
+    // Saving Attendance Data into Database
+
+    $.ajax({
+        url:"{% url 'accountant_student_apply_payment_save' %}",
+        type:'POST',
+        data:{payment_id:payment_id, in_cash:in_cash , trans_id:trans_id , bkash_nmb:bkash_nmb},
+    })
+
+    
+    .done(function(response){
+        
+        if(response=="True")
+        {
+            alert("Payment Added!")
+        }
+        else
+        {
+            alert("Failed to Add Payment!")
+        }
+        location.reload()
+        
+        //console.log(response)
+    })
+
+    .fail(function(){
+        alert("Error in Adding Payment .")
+    })
+
+})
+
+</script>
+
+{% endblock custom_js %}

@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %} 
+
+{% block content %}
+
+
+
+<body>
+   
+<!-- header section starts  -->
+
+<header>
+
+    <!-- <div id="menu" class="fas fa-bars"></div> -->
+
+    <a href="{% url 'login' %}" class="logo"><img src="{% static 'images/Logo-main.png' %}" height="48px" width="48px" alt=""> Alim's <span  style="font-weight:800;color:rgb(201, 0, 0)">Academy</span>  </a>
+
+    <!-- <nav class="navbar">
+        <ul>
+            <li><a class="active" href="#">Home</a></li>
+            <li><a class="" href="#">About</a></li>
+            <li><a class="" href="#">Contact</a></li>
+            
+        </ul>
+    </nav> -->
+
+    <a id="login" href="/about"><i class="fas fa-globe"></i> About</a>
+    <!-- <div id="login" class="login fas fa-user-circle"></div> -->
+
+</header>
+
+<!-- header section ends -->
+
+<!-- login form  -->
+
+<div class="login-form">
+
+    <form action="{% url 'doLogin' %}" method="POST">
+      {% csrf_token %}
+        <h3>login</h3>
+        <input type="text" name="email" placeholder="Coaching-ID / Username" class="box">
+        <input type="password" name="password" placeholder="Password" class="box">
+        <!-- <p>forget password? <a href="#">click here</a></p> -->
+        <!-- <p>don't have an account? <a href="#">register now</a></p> -->
+        <input type="submit" class="btn" >
+        <i class="fas fa-times"></i>
+    </form>
+
+</div>
+
+<!-- home section starts  -->
+
+<section class="home" id="home">
+    {% if messages %}
+    <div class="col-12">
+      {% for message in messages %}
+        {% if message.tags == "error" %}
+          <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+    <h1>Alim's Academy</h1>
+    <p>স্বপ্নপূরণে অঙ্গীকারবদ্ধ</p>
+    <!-- <h1>স্বপ্নবাহক</h1>
+    <p>পৌঁছে দিবে স্বপ্ন আপনার ঠিকানায়</p> -->
+    <button class="login btn">Log In</button>
+    
+    <div class="shape"></div>
+
+</section>
+
+<!-- home section ends -->
+
+<!-- footer section starts  -->
+
+<div class="footer">
+
+    <div class="box-container">
+
+        <!-- <div class="box">
+            <h3>branch locations</h3>
+            <a href="#">India</a>
+            <a href="#">USA</a>
+            <a href="#">france</a>
+            <a href="#">russia</a>
+        </div>
+
+        <div class="box">
+            <h3>quick links</h3>
+            <a href="#">home</a>
+            <a href="#">about</a>
+            <a href="#">course</a>
+            <a href="#">teachers</a>
+            <a href="#">contact</a>
+        </div> -->
+
+        <div class="box">
+            <h3>contact info</h3>
+            <p> <i class="fas fa-map-marker-alt"></i> Mirpur, Dhaka - 1216. </p>
+            <p> <i class="fas fa-envelope"></i> alimsacademy@gmail.com </p>
+            <p> <i class="fas fa-phone"></i> +880161-1150-575 </p>
+        </div>
+        <div class="box contact-form form-group w-50 mx-5">
+
+          <form action="{% url 'save_contact' %}" method="POST">
+            {% csrf_token %}
+              <h3>Contact Message</h3>
+              <input type="text"    name="name" placeholder="Name" class="box form-control" style="padding: 20px;">
+              <input type="text"   name="phone" placeholder="Phone" class="box form-control" style="padding: 20px;">
+              <input type="text"   name="message" placeholder="Message" class="box form-control" style="padding: 20px;">
+              <!-- <p>forget password? <a href="#">click here</a></p> -->
+              <!-- <p>don't have an account? <a href="#">register now</a></p> -->
+              <input type="submit" class="btn" >
+              <i class="fas fa-times"></i>
+          </form>
+        
+        </div>
+    </div>
+
+    <h1 class="credit">developed by <a href="#">Fahim Ahmed</a> &copy; all rights reserved by Alim's Academy. </h1>
+
+</div>
+
+</body>
+
+{% endblock %}

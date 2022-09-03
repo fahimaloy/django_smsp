@@ -1,0 +1,270 @@
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Student Payment Histories
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+    <div class="container-fluid">
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-dark">
+                    <div class="card-header">
+
+
+                        <h3 class="card-title">Student Payment History</h3>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label>Class</label>
+                                    <select name="classes" id="classes" class="form-control">
+                                        <option value=""> ------------ </option>
+                                        {% for cls in classes %}
+                                        <option value="{{cls.id}}">{{cls.class_name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label>Batch</label>
+                                    <select name="batch" id="batch" class="form-control">
+                                        <option value=""> ------------ </option>
+                                    </select>
+
+                                </div>
+                            </div>
+
+
+                            <div class="col-lg-4 secondInput">
+                                <div class="form-group">
+                                    <label>Students</label>
+                                    <select name="students" id="students" class="form-control">
+
+                                    </select>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <button type="button" class="btn btn-primary ml-1 " id="fetch_students">Fetch Students</button>
+                                                <button type="button" class="btn btn-success ml-1 secondInput" id="fetch_data">Fetch
+                                                    Details</button>
+                                            </div>
+                                        </div>
+                    </div> <!-- card-body -->
+                </div> <!-- card card-dark -->
+
+
+
+
+
+
+
+                <div class="card card-dark TableDate">
+                    <div class="card-body">
+                        
+                        <table class="table">
+                            
+                            <tr class="bg-light" id="filteredTable3">
+
+                            </tr>
+                        
+                        </table>
+                        <div class="table-responsive">
+                        <table class="table">
+                                
+                                <thead class="thead bg-dark">
+                                    <tr>
+                                        <th colspan="8" style="text-align: center;">Payments by Students</th>
+                                    </tr>
+                                    
+                                    <tr class="bg-light">
+                                        <th>#ID</th>
+                                        <th>Fees Title</th>
+                                        <th>Amount</th>
+                                        <th>Additional</th>
+                                        <th>Payment Status</th>
+                                        <th>Paid At</th>
+                                        <th>Payment Method</th>
+                                        <th>Bkash Number</th>
+                                        <th>Transaction ID</th>
+
+                                    </tr>
+                                </thead>
+                            
+
+
+                                <tbody id="filteredTable">
+
+                                </tbody>
+
+                            </table>
+                            </div>
+                            
+                        </div>
+                        
+                    
+                </div>
+            </div> <!-- col-md-12 -->
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+{% endblock main_content %}
+
+{% block custom_js %}
+
+<script>
+     $("#classes").change(function () {
+        // get the url of the `load_cities` view
+      var class_id = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: "{% url 'load_batch' %}",   
+        type:'POST',
+        data: {
+          'classes': class_id ,     // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+            let x = data.batchJson ; 
+            
+            let output = "" ;
+            for(i=0;i<x.length; i++){
+                output += "<option value='"+x[i].id+"'>"+x[i].batch_name+"</option>";
+            }
+            $("#batch").html(output);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+
+  $(document).ready(function(){
+
+
+        $(".secondInput").hide();
+        $("#fetch_students").click(function(){
+
+            // Displaying Students Based on Staff, class and Session Enrolled
+
+            var clss=$("#classes").val()
+            var batch=$("#batch").val()
+
+            $.ajax({
+                url:"{% url 'get_students_for_payment' %}",
+                type:'POST',
+                data:{batch:batch},
+            })
+
+            
+            .done(function(response){
+                $(".secondInput").show();
+                var json_data=JSON.parse(response);
+                console.log(json_data)
+                //Displaying Attendance Date Input and Students Attendance
+                var div_data=""
+                
+
+                for(key in json_data)
+                {
+                    div_data+="<option value='"+ json_data[key]['id'] +"'>"+ json_data[key]['name']+"</option>";
+
+                }
+                $("#students").html(div_data);
+
+                
+                console.log(div_data);
+
+            })
+            .fail(function(){
+                alert("Error in Fetching Students.")
+            })
+        });    
+    
+
+
+        $(".TableDate").hide()
+        $("#fetch_data").click(function(){
+                
+                let students = $("#students").val()
+                
+                let output="";
+                let output2="";
+
+                $.ajax({
+                    url:"{% url 'student_payment_single' %}",
+                    type:'POST',
+                    data:{student_id:students},
+                    dataType: "json",
+
+                    success: function(data){
+                        $(".TableDate").show();
+                        
+                        if(data.status == "OK"){
+                            let total_fees = data.totalAmount;
+                            let total_paid = data.paidAmount;
+                            let x = data.payment_details;
+                            let paid_at = data.paid_at;
+                            // let y = data.fees_details;
+
+                                for(i=0;i<x.length; i++){
+                                    // if(x[i].bkash_nmb != 0){
+                                    //     output += "<tr class='table-active'><td>"+ parseInt(i+1) +"</td><td>"+x[i].pay_upto+"</td><td>"+x[i].amount+"</td><td>"+x[i].bkash_nmb+"</td><td>"+x[i].trans_id+"</td></tr>";
+                                    // }
+                                    // else{
+                                    output += "<tr class=''><td>"+ parseInt(i+1) +"</td><td>"+x[i].fees_title+"</td><td>"+x[i].amount+"  ৳</td><td>"+ x[i].extra_fees_title +" "+x[i].extra_amount+" ৳</td>";
+                                    if (x[i].paid_status == 1){
+                                        if(x[i].in_cash == 0){
+
+                                            output += "<td>Paid</td><td>"+paid_at[i]+"</td><td colspan='4'>In Cash</td></tr>";
+                                        }
+                                        else{
+                                            output += "<td>Paid</td><td>"+paid_at[i]+"</td><td>bKash</td><td>"+ x[i].bkash_nmb +"</td><td>"+ x[i].trans_id +"</td></tr>";
+                                        }
+                                    }
+                                    else{
+                                        output += "<td colspan='5'>Unpaid</tr>";
+                                    }
+                                    // }
+                                    
+                                }
+                                
+                            
+                                let due_payment = parseInt(total_fees) - parseInt(total_paid);
+                                let output3 = "<th>Total Fees : "+total_fees+"<b>৳</b></th><th>Total Paid : "+ total_paid +"<b>৳</b></th><th>Due Payment : "+ due_payment +"<b>৳</b></th>"
+                                
+                            
+                            $("#filteredTable").html(output);
+                            
+                            $("#filteredTable3").html(output3);
+                            
+
+
+                        }
+                        
+
+                    },
+                    
+                });
+
+            });
+
+    });
+
+
+
+</script>
+
+{% endblock custom_js %}

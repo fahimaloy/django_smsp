@@ -1,0 +1,141 @@
+
+
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Edit Accountant | Username: {{ accountant.admin.username }}
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Edit Accountant</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <!-- form start -->
+                    <form role="form" method="POST" action="{% url 'edit_accountant_save' %}">
+                        {% csrf_token %}
+
+                        
+                                {% comment %} Display Messages {% endcomment %}
+                                {% if messages %}
+                                <div class="form-group">
+                                <div class="col-12">
+                                    {% for message in messages %}
+                                    {% if message.tags == "error" %}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% elif message.tags == "success" %}
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                                </div>
+                                {% endif %}
+                            
+
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Email address</label>
+                                <input type="email" class="form-control" name="email" value="{{ accountant.admin.email }}"  required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input type="text" class="form-control" name="username" value="{{ accountant.admin.username }}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" class="form-control" name="password" placeholder="Type only if you want to change Password">
+                            </div>
+
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" class="form-control" name="first_name" value="{{ accountant.admin.first_name }}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" class="form-control" name="last_name" value="{{ accountant.admin.last_name }}" required>
+                                <input type="hidden" name="accountant_id" value="{{ id }}" />
+                            </div>
+
+                            
+                            <div class="form-group">
+                                <label>Gender</label>
+                                <select name="gender" id="gender" value="{{accountant.gender}}" class="form-control" required>
+                                    <option value="0" > Male </option>
+                                    <option value="1" > Female </option>
+                                </select>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Mobile Number</label>
+                                <input type="text" class="form-control" value="{{accountant.mobileNumber}}" name="mobileNumber" placeholder="Mobile Number" required>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Emergency Mobile Number</label>
+                                <input type="text" class="form-control" value="{{accountant.emergencyMobileNumber}}" name="emergencyMobileNumber" placeholder="Emergency Mobile Number" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Date Of Birth</label>
+                                <input type="date" class="form-control" value={{birthDate}} name="dateOfBirth" placeholder="Date of Birth" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Parmanent Address</label>
+                                <textarea name="parmanentAddress" class="form-control" placeholder="Parmanent Address" required>{{accountant.parmanentAddress}}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Present Address</label>
+                                <textarea name="presentAddress" class="form-control" placeholder="Present Address" required> {{accountant.presentAddress}} </textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Experience<sub class="text-muted">*If not available for you, type "None"</sub></label>
+                                <textarea name="experience" class="form-control" placeholder="Experience: Institute , From - To , Position" required> {{accountant.experience}} </textarea>
+                            </div>
+
+
+                            
+
+
+                        </div>
+                        <!-- /.card-body -->
+
+                        <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Update Accountant</button>
+                        </div>
+                    </form>
+                    </div>
+                    <!-- /.card -->
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+  {% endblock main_content %}

@@ -1,0 +1,124 @@
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Class Registration Teachers
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Class Registration Teachers</h3>
+                        </div>
+                        <!-- /.card-header -->
+                         {% comment %} Display Messages {% endcomment %}
+                                {% if messages %}
+                                <div class="form-group">
+                                <div class="col-12">
+                                    {% for message in messages %}
+                                    {% if message.tags == "error" %}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% elif message.tags == "success" %}
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                                </div>
+                                {% endif %}
+                        <div class="table-responsive">
+                            <table id="datatable" class="table">
+                                <thead>
+                                <tr>
+                                    <th>#SL</th>
+                                    <th>Teacher Username</th>
+                                    <th>Teacher Name</th>
+                                    <th>Class</th>
+                                    <th>Batch</th>
+                                    <th>Subject</th>
+                                    <th>Class Date</th>
+                                    <th>From Time</th>
+                                    <th>To Time</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                {% for reg in regs %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ reg.teacher_id.admin.username }}</td>
+                                    <td>{{ reg.teacher_id.admin.first_name }} {{ reg.teacher_id.admin.last_name }}</td> 
+                                    <td>{{reg.pcc_id.class_id.class_name}}</td>
+                                    <td>{{reg.pcc_id.batch_id.batch_name}}</td>
+                                    <td>{{reg.pcc_id.subject_id.subject_name}}</td>
+                                    <td>{{ reg.class_date }}</td>
+                                    <td>{{ reg.from_time }}</td>
+                                    <td>{{ reg.to_time }}</td>
+                                    <td>
+                                        {% if reg.status == 0 %}
+                                            <a href="{% url 'teacher_class_reg_approve' reg_id=reg.id %}" class="btn btn-success my-2">Approve</a>
+                                            <a href="{% url 'teacher_class_reg_reject' reg_id=reg.id %}" class="btn btn-danger">Reject</a>
+                                            <a href="{% url 'delete_registered_class' reg_id=reg.id %}" class="btn btn-danger my-2">Delete</a>
+                                        {% elif reg.status == 1 %}
+                                            <button class="btn btn-warning" disabled="disabled">Approved</button>
+                                            <a href="{% url 'delete_registered_class' reg_id=reg.id %}" class="btn btn-danger my-2">Delete</a>
+                                        {% else %}
+                                            <button class="btn btn-danger" disabled="disabled">Rejected</button>
+                                            <a href="{% url 'delete_registered_class' reg_id=reg.id %}" class="btn btn-danger my-2">Delete</a>
+                                        {% endif %}
+                                        
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+
+
+                 
+
+
+                            </table>
+                        </div>
+                    
+                    </div>
+                    <!-- /.card -->
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+
+
+  {% endblock main_content %}
+
+  {% comment %} Custom JS to Identify the Reply and Post Reply {% endcomment %}
+
+  {% block custom_js %}
+<script>
+$(document).ready(function () {
+    $('#datatable').DataTable({
+        "searching": false ,
+        "pageLength": 50
+    });
+});
+</script>
+  {% endblock custom_js %}

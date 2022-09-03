@@ -1,0 +1,97 @@
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Online Class
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Online Class</h3>
+                    </div>
+                    <!-- /.card-header -->
+
+
+                            
+                    <!-- <form method="POST" action="{% url 'student_apply_payment_save' %}"> -->
+                                    
+            
+                                    <div class="card-body">
+                                       <div class="table-responsive">
+                                            <table class="table">
+                                                <thead class="thead-light">
+                                                <tr>
+                                                    <th>#SL</th>
+                                                    <th>Teacher</th>
+                                                    <th>Class Title</th>
+                                                    <th>Class Link</th>
+                                                    <th>Class</th>
+                                                    <th>Batch</th>
+                                                    <th>Action</th>
+                                                    
+                                                    
+                                                </tr>
+                                                </thead>
+                                                
+                                                
+                                    {% for row in classes %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ row.teacher_id.first_name }} {{ row.teacher_id.last_name }}</td>
+                                        <td>{{ row.online_class_name }}</td>
+                                        <td>{{ row.online_class_link }}</td>
+                                        <td>{{ row.class_id.class_name }}</td>
+                                        <td>{{ row.batch_id.batch_name }}</td>
+                                        <td>
+                                            {% if row.status == False %}
+                                            <a href="" class='btn btn-dark' disabled=disabled><i class="fas fa-stop"></i> Class is off now</a>
+                                            
+                                            {% elif row.status == True %}
+                                            <a href="{{ row.online_class_link }}" class='btn btn-success'> Ongoing....Click to Join </a>
+                                            
+                                            
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <!-- /.card-body -->
+            
+                                
+
+                            
+
+                        </div>
+                        <!-- /.card-body -->
+
+
+
+                    </div>
+                    <!-- /.card -->
+
+
+
+                </div>
+            </div>
+
+
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+  {% endblock main_content %}
+
+{% block custom_js %}
+
+{% endblock custom_js %}

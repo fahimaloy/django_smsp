@@ -1,0 +1,131 @@
+{% load static %}
+
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+      <!-- Brand Logo -->
+      <a href="{% url 'teacher_home' %}" class="brand-link">
+        <img src="{% static 'images/Logo-main.png' %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+            style="opacity: .8">
+        <span class="brand-text font-weight-light">Alim's Academy</span>
+      </a>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Sidebar user panel (optional) -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+          <div id="dp" class="image">
+          </div>
+          <div class="info">
+            <a href="{% url 'teacher_profile' %}" class="d-block">{{ user.first_name }} {{ user.last_name }}</a>
+          </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <!-- Add icons to the links using the .nav-icon class
+                with font-awesome or any other icon font library -->
+            
+            <li class="nav-item">
+              {% url 'teacher_home' as teacher_home %}
+              <a href="{{ teacher_home }}" class="nav-link {% if request.path == teacher_home %} active {% endif %}">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                  Home
+                  {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
+                </p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              {% url 'teacher_take_attendance' as teacher_take_attendance %}
+              <a href="{{ teacher_take_attendance }}" class="nav-link {% if request.path == teacher_take_attendance %} active {% endif %}">
+                <i class="nav-icon fas fa-calendar-plus"></i>
+                <p>
+                  Take Attendance
+                  {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
+                </p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              {% url 'teacher_update_attendance' as teacher_update_attendance %}
+              <a href="{{ teacher_update_attendance }}" class="nav-link {% if request.path == teacher_update_attendance %} active {% endif %}">
+                <i class="nav-icon fas fa-calendar-alt"></i>
+                <p>
+                  View Update Attendance
+                  {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
+                </p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              {% url 'teacher_add_result' as teacher_add_result %}
+              <a href="{{ teacher_add_result }}" class="nav-link {% if request.path == teacher_add_result %} active {% endif %}">
+                <i class="nav-icon fas fa-tasks"></i>
+                <p>
+                  Add Result
+                  {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
+                </p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              {% url 'teacher_class_register' as teacher_class_register %}
+              <a href="{{ teacher_class_register }}" class="nav-link {% if request.path == teacher_class_register %} active {% endif %}">
+                <i class="nav-icon fas fa-envelope-open-text"></i>
+                <p>
+                  Register a Class
+                  {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
+                </p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              {% url 'teachers_payment_section' as teachers_payment_section %}
+              <a href="{{ teachers_payment_section }}" class="nav-link {% if request.path == teachers_payment_section %} active {% endif %}">
+                <i class="nav-icon fas fa-cash-register"></i>
+                <p>
+                  Payment Section
+                  {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
+                </p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              {% url 'manage_assigned_classes' as manage_assigned_classes %}
+              <a href="{{ manage_assigned_classes }}" class="nav-link {% if request.path == manage_assigned_classes %} active {% endif %}">
+                <i class="nav-icon fas fa-paste"></i>
+                <p>
+                  Total Assigned Classes
+                  {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              {% url 'add_online_class' as add_online_class %}
+              <a href="{{ add_online_class }}" class="nav-link {% if request.path == add_online_class %} active {% endif %}">
+                <i class="nav-icon fas fa-pen"></i>
+                <p>
+                  Add/Edit Online Class
+                  {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              {% url 'teacher_feedback' as teacher_feedback %}
+              <a href="{{ teacher_feedback }}" class="nav-link {% if request.path == teacher_feedback %} active {% endif %}">
+                <i class="nav-icon fas fa-comments"></i>
+                <p>
+                  Feedback
+                  {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
+                </p>
+              </a>
+            </li>
+
+
+          </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+      </div>
+      <!-- /.sidebar -->
+    </aside>

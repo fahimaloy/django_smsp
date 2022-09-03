@@ -1,0 +1,352 @@
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Manage Student
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            {% if messages %}
+                                <div class="form-group">
+                                <div class="col-12">
+                                    {% for message in messages %}
+                                    {% if message.tags == "error" %}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% elif message.tags == "success" %}
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                                </div>
+                                {% endif %}
+                                
+            <div class="row">
+                <div class="col-3">
+
+                    <a class="btn btn-primary"  href="{% url 'add_student' %}" role="button">+ Add Student</a> <br/>&nbsp;
+                </div>
+                <div class="col-3"   id="activeButton" >
+                    
+                    <button class="btn btn-info">Active Students</button> <br/>&nbsp;
+                </div>
+                <div class="col-3" id="deactiveButton">
+                    <button class="btn btn-dark">Deactivated Students</button> <br/>&nbsp;
+                    
+                </div>
+            </div>
+            <div class="row">
+                
+                    <div class=" col-3 form-group ">
+
+                        <select name="class_id" id="class_id" class="form-control float-right " >
+                            <option> ------------ </option>
+                            {% for clss in classes %}
+                            <option value="{{clss.id}}">{{clss.class_name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-3 form-group mx-2">
+                        <select name="batch_id" id="batch_id" class="form-control float-right " >
+                            <option> ------------ </option>
+                        </select>
+                    </div>
+            
+                    <div class="col-3 form-group">
+                        <button type="submit" id="batchSearch" class="btn btn-default"><i class="fas fa-search"></i></button>
+                    </div>
+                
+            </div>
+            
+            
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Student Details</h3>
+
+                            <div class="card-tools">
+                            <div class="input-group input-group-sm" style="width: 200px;">
+                                <input type="text" name="table_search" id="studentSearch" class="form-control float-right mx-2" placeholder="Search">
+                            </div>
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body table-responsive p-0">
+                            <table class="table table-hover text-nowrap">
+                            <thead>
+                                <tr>
+                                <th>SL</th>
+                                <th>Name</th>
+                                <th>Coaching ID</th>
+                                <th>Email</th>
+                                <th>Address</th>
+                                <th>Gender</th>
+                                <th>Profile Pic</th>
+                                <th>Batch</th>
+                                <th>Class</th>
+                                <th>Last Login</th>
+                                <th>Date Joined</th>
+                                <th>Active Status</th>
+                                <th>Action</th>
+                                </tr>
+                            </thead>
+                            
+                            <tbody class="TableDate" id="activeStudents">
+                                
+                                {% for student in students %}
+                                {% if student.active_status == True %}
+                                <tr class="forloop">
+                                <td>{{ forloop.counter }}</td>
+                                <td><a href="{% url 'manage_student_single' student.id %}">{{ student.admin.first_name }}  {{ student.admin.last_name }}</a></td> 
+                                <td>{{ student.admin.username }}</td>
+                                <td>{{ student.admin.email }}</td>
+                                <td>{{ student.presentAddress }}</td>
+                                <td>{{ student.gender }}</td>
+                                <td> <img src="{{ student.profile_pic }}" style="width: 100px;" /> </td>
+                                <td>{{ student.batch_id.batch_name }}</td>
+                                <td>{{ student.class_id.class_name }}</td>
+                                <td>{{ student.admin.last_login }}</td>
+                                <td>{{ student.admin.date_joined }}</td>
+                                <td>
+                                    <a href="{% url 'deactivate_student' student.admin.id %}" class="btn btn-dark">Deactivate</a>
+                                    
+                                    
+                                    
+                                </td>
+                                <td>
+                                    <a href="{% url 'edit_student' student.admin.id %}" class="btn btn-success">Edit</a> 
+                                    <a href="{% url 'delete_student' student.admin.id %}" class="btn btn-danger mx-2">Delete</a>
+                                </td>
+                            </tr>
+                            {% endif %}
+                                {% endfor %}
+                                
+                                
+                            </tbody>
+                            
+                            <tbody id="deactiveStudents">
+                                
+                                {% for student in students %}
+                                    {% if student.active_status == False %}
+                                <tr class="forloop">
+                                <td>{{ forloop.counter }}</td>
+                                <td><a href="{% url 'manage_student_single' student.id %}">{{ student.admin.first_name }}  {{ student.admin.last_name }}</a></td> 
+                                <td>{{ student.admin.username }}</td>
+                                <td>{{ student.admin.email }}</td>
+                                <td>{{ student.presentAddress }}</td>
+                                <td>{{ student.gender }}</td>
+                                <td> <img src="{{ student.profile_pic }}" style="width: 100px;" /> </td>
+                                <td>{{ student.batch_id.batch_name }}</td>
+                                <td>{{ student.class_id.class_name }}</td>
+                                <td>{{ student.admin.last_login }}</td>
+                                <td>{{ student.admin.date_joined }}</td>
+                                <td>
+                                    
+                                    <span aria-disabled="true"  class="btn btn-danger">Deactivated</span> 
+                                    <a href="{% url 're_activate_student' student.admin.id %}" class="btn btn-success m-2">Re activate</a>
+                                    
+                                </td>
+                                <td>
+                                    <a href="{% url 'edit_student' student.admin.id %}" class="btn btn-success">Edit</a> 
+                                    <a href="{% url 'delete_student' student.admin.id %}" class="btn btn-danger mx-2">Delete</a>
+                                </td>
+                            </tr>
+                            {% endif %}
+                                {% endfor %}
+                                
+                                
+                            </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                        </div>
+                    <!-- /.card -->
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+  {% endblock main_content %}
+  
+{% block custom_js %}
+<script>
+    $(document).ready(function(){
+        $("#activeStudents").show();
+        $("#deactiveStudents").hide();
+        $("#activeButton").hide();
+        $("#deactiveButton").show();
+        $("#activeButton").click(function(){
+            $("#activeStudents").show();
+            $("#deactiveStudents").hide();
+            $("#activeButton").hide();
+            $("#deactiveButton").show();
+        })
+        $("#deactiveButton").click(function(){
+            $("#activeStudents").hide();
+            $("#deactiveButton").hide();
+            $("#activeButton").show();
+            $("#deactiveStudents").show();
+        })
+
+    });
+</script>
+<script>
+     $("#class_id").change(function () {
+        // get the url of the `load_cities` view
+      var class_id = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: "{% url 'load_batch' %}",   
+        type:'POST',
+        data: {
+          'classes': class_id ,     // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+            let x = data.batchJson ; 
+            
+            let output = "" ;
+            for(i=0;i<x.length; i++){
+                output += "<option value='"+x[i].id+"'>"+x[i].batch_name+"</option>";
+            }
+            $("#batch_id").html(output);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+  $(document).ready(function(){
+    $(".forloop").show();
+        
+        $("#studentSearch").keyup(function(){
+                
+                let studentSearch = $("#studentSearch").val()
+                
+                
+                if($.trim(studentSearch).length > 0){
+                let output="";
+                
+                
+                
+                $.ajax({
+                    url:"{% url 'get_student_search' %}",
+                    type:'POST',
+                    data:{studentSearch:studentSearch},
+                    dataType: "json",
+                    
+                    success: function(data){
+                        $(".forloop").hide();
+                        $(".TableDate").show();
+                        if(data.status == "OK"){
+                            
+                            
+                            let x = data.studentslist;
+                            let y = data.classDetails;
+                            
+                            for(i=0;i<x.length; i++){
+                                let a = x[i].id;
+                                console.log(a)
+                                output += "<tr><td>"+ parseInt(i+1) +"</td><td><a href='/manage_student_single/"+ y[i].id +"'>"+x[i].first_name+" "+x[i].last_name+"</a></td><td>"+ x[i].username+"</td><td>"+x[i].email+"</td><td>"+ y[i].address +"</td><td>"+y[i].gender+"</td><td>"+ y[i].profile_pic+"</td><td>"+y[i].batchName+"</td><td>"+y[i].className+"</td><td>"+ x[i].last_login +"</td><td>"+ x[i].date_joined +"</td><td><a href='/edit_student/"+ x[i].id +" ' class='btn btn-success'>Edit</a><a href='/delete_student/"+ x[i].id +" ' class='btn btn-danger mx-2'>Delete</a></td></tr>";
+                                    
+                                    
+                                }
+                                
+                                
+                                // output2 += "<thead class='thead-dark'><tr><th rowspan='2' colspan='2'> Total Marks :"+ a+"/"+b +"</th><th>Working Days:"+ xy[0] +"</th><th>Present:"+ xy[1]+"</th><th>Absent:"+ xy[2] +"</th></tr></thead></table>"
+                                $(".TableDate").html(output);
+                            
+                            // console.log(data.list1);
+                            
+
+
+                        }
+                        
+
+                    },
+                    
+                });
+            }
+
+            });
+
+            $("#batchSearch").click(function(){
+                
+                let batch_id = $("#batch_id").val()
+                let class_id = $("#class_id").val()
+                
+                
+                            
+                let output="";
+                
+                $.ajax({
+                    url:"{% url 'get_student_batch_search' %}",
+                    type:'POST',
+                    data:{class_id:class_id,batch_id:batch_id},
+                    dataType: "json",
+                    
+                    success: function(data){
+                        $(".forloop").hide();
+                        $(".TableDate").show();
+                        if(data.status == "OK"){
+                            
+                            
+                            let x = data.studentslist;
+                            let y = data.studentsNameList;
+                            let studentsUsernameList = data.studentsUsernameList;
+                            let studentsEmailList = data.studentsEmailList;
+                            let studentsAdminIDList = data.studentsAdminIDList;
+                            let studentData = data.studentData;
+                            
+                            
+                            for(i=0;i<x.length; i++){
+                                // let a = x[i].id;
+                                // console.log(a)
+                                output += "<tr><td>"+ parseInt(i+1) +"</td><td><a href='/manage_student_single/"+ x[i].id +"'>"+y[i]+"</a></td><td>"+ studentsUsernameList[i]+"</td><td>"+studentsEmailList[i]+"</td><td>"+x[i].presentAddress+"</td><td>"+x[i].gender+"</td><td>"+ x[i].profile_pic +"</td><td>"+studentData[i].batchName+"</td><td>"+studentData[i].className+"</td><td>"+studentData[i].last_login+"</td><td>"+ studentData[i].date_joined +"</td><td><a href='/deactivate_student/"+ studentsAdminIDList[i] +" ' class='btn btn-dark'>Deactivate</a></td><td><a href='/edit_student/"+ studentsAdminIDList[i] +" ' class='btn btn-success'>Edit</a><a href='/delete_student/"+ studentsAdminIDList[i] +" ' class='btn btn-danger mx-2'>Delete</a></td></tr>";
+                                    
+                                    
+                                }
+                                
+                                
+                                // output2 += "<thead class='thead-dark'><tr><th rowspan='2' colspan='2'> Total Marks :"+ a+"/"+b +"</th><th>Working Days:"+ xy[0] +"</th><th>Present:"+ xy[1]+"</th><th>Absent:"+ xy[2] +"</th></tr></thead></table>"
+                                $(".TableDate").html(output);
+                            
+                            // console.log(data.list1);
+                            
+
+
+                        }
+                        
+
+                    },
+                    
+                });
+            
+
+            });
+
+
+    });
+
+
+
+</script>
+
+{% endblock custom_js %}

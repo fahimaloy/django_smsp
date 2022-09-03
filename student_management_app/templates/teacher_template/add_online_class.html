@@ -1,0 +1,198 @@
+{% extends 'teacher_template/base_template.html' %}
+
+{% block page_title %}
+    Add Result
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <form method="POST" action="{% url 'get_online_class' %}">
+                    {% csrf_token %}
+                    <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Add Online Class</h3>
+                    </div>
+                    <!-- /.card-header -->
+
+                                {% comment %} Display Messages {% endcomment %}
+                                {% if messages %}
+                                <div class="form-group">
+                                <div class="col-12">
+                                    {% for message in messages %}
+                                    {% if message.tags == "error" %}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% elif message.tags == "success" %}
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% elif message.tags == "warning" %}
+                                        <div class="alert alert-warning alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                                </div>
+                                {% endif %}
+                            
+          
+
+                        <div class="card-body">
+                           
+                            <div class="form-group">
+                                <label>Class </label>
+                                <select class="form-control" name="className" id="className">
+                                    <option value=""> ------------ </option>
+                                    
+                                        {% for p in classes %}
+                                            
+                                                <option value="{{ p.id }}">{{ p.class_name }}</option>
+                                            
+                                            
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label> Batches </label>
+                                <select class="form-control" name="batch" id="batch">
+                                    <option value=""> ------------ </option>
+                                    
+                                </select>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Online Class Name </label>
+                                <input class="form-control" name="online_class_name" id="online_class_name">
+                                    
+                            </div>
+                            <div class="form-group">
+                                <label>Online Class Link </label>
+                                <input class="form-control" name="online_class_link" id="online_class_link">
+                                    
+                            </div>
+                            
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary" id="fetch_online_class">Add Online Class</button>
+                                </div>
+        
+                                {% comment %} Displaying Online Class Here {% endcomment %}
+        
+                                <div class="card-footer" id="online_class_data">
+
+                                </div> 
+        
+                            
+
+                        </div>
+                        <!-- /.card-body -->
+
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-success">
+                        
+
+                        <div class="card-body">
+                           <div class="table-responsive">
+                                <table class="table">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th>#SL</th>
+                                        <th>Title</th>
+                                        <th>Link</th>
+                                        <th>Class</th>
+                                        <th>Batch</th>
+                                        <th>Action</th>
+                                        
+                                        
+                                    </tr>
+                                    </thead>
+                                    
+                                    {% for row in online_classes %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ row.online_class_name }}</td>
+                                        <td>{{ row.online_class_link }}</td>
+                                        <td>{{ row.class_id.class_name }}</td>
+                                        <td>{{ row.batch_id.batch_name }}</td>
+                                        <td>
+                                            {% if row.status == False %}
+                                            <a href="{% url 'play_class' row.id %}" class='btn btn-success'><i class="fas fa-play"></i> Start</a>
+                                            <a href="{% url 'delete_online_class' row.id %}" class='btn btn-danger'><i class="fas fa-cut"></i> Delete</a>
+                                            {% elif row.status == True %}
+                                            <a href="{% url 'pause_class' row.id %}" class='btn btn-warning'><i class="fas fa-pause"></i> Stop</a>
+                                            <a href="{% url 'delete_online_class' row.id %}" class='btn btn-danger'><i class="fas fa-cut"></i> Delete</a>
+                                            
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+            </div>
+                    </div>
+                    </form>
+                    <!-- /.card -->
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+  {% endblock main_content %}
+
+{% block custom_js %}
+<script>
+    $("#className").change(function () {
+        // get the url of the `load_cities` view
+      var class_id = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: "{% url 'load_batch' %}",   
+        type:'POST',
+        data: {
+          'classes': class_id ,     // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+            let x = data.batchJson ; 
+            
+            let output = "" ;
+            for(i=0;i<x.length; i++){
+                output += "<option value='"+x[i].id+"'>"+x[i].batch_name+"</option>";
+            }
+            $("#batch").html(output);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+    
+</script>
+
+{% endblock custom_js %}

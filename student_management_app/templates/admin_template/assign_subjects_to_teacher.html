@@ -1,0 +1,189 @@
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Add Subjects to Teacher
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+            {% if messages %}
+            <div class="form-group">
+            <div class="col-12">
+                {% for message in messages %}
+                {% if message.tags == "error" %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                {% elif message.tags == "success" %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Add Subjects to Teacher</h3>
+                        </div>
+                        <!-- /.card-header -->
+
+                        <form action="{% url 'assign_subjects_to_teacher_save' %}"  method="POST">
+                            {% csrf_token %}
+                            <div class="form-group m-2">
+                                <label for="teachers">Teacher : </label>
+                                <select name="teachers" id="teachers" class="form-control">
+                                    {% for teacher in teachers %}
+                                        <option  value="{{teacher.id}}"> {{teacher.admin.first_name}} {{teacher.admin.last_name}} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group m-2">
+                                <label for="classes">Class : </label>
+                                <select name="classes" id="classes" class="form-control">
+                                        <option> ------------ </option>
+                                    {% for clss in classes %}
+                                        <option  value="{{clss.id}}"> {{clss.class_name}} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group m-2">
+                                <label for="batches">Batch : </label>
+                                <select name="batches" id="batches" class="form-control">
+                                    <option> ------------ </option>
+                                </select>
+                            </div>
+                            <div class="form-group m-2">
+                                <label>Subject : </label>
+                                <select name="subjects" id="subjects" class="form-control">
+                                    <option> ------------ </option>
+                                </select>
+                            </div>
+                            <div class="form-group m-2">
+                                <label for="amount">Amount : </label>
+                                <input type="number" class="form-control" name="amount" id="amount" placeholder="Type the amount" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary m-2">Assign</button>
+                        </form>
+
+
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class="bg-primary">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Teacher</th>
+                                    <th>Class</th>
+                                    <th>Batch</th>
+                                    <th>Subject</th>
+                                    <th> Amount</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+
+                                {% for pcc in pcc %}
+                                <tbody>
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ pcc.teacher_id.first_name }} {{pcc.teacher_id.last_name}}</td>
+                                    <td>{{ pcc.class_id.class_name }}</td>
+                                    <td>{{ pcc.batch_id.batch_name }}</td>
+                                    <td>{{ pcc.subject_id.subject_name }}</td>
+                                    <td>{{ pcc.amount }} ৳</td>
+                                    
+                                    
+                                    <td>
+                                        
+                                            <a href="{% url 'edit_assigned_subjects_to_teacher' pcc_id=pcc.id %}" class="btn btn-success">Edit</a>
+                                            <a href="{% url 'delete_assigned_subjects_to_teacher' pcc_id=pcc.id %}" class="btn btn-danger">Delete</a>
+                                        
+                                        
+                                    </td>
+                                </tr>
+                                </tbody>
+                                {% endfor %}
+
+                            </table>
+                        </div>
+                    
+                    </div>
+                    <!-- /.card -->
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+      
+
+  {% endblock main_content %}
+
+  {% comment %} Custom JS to Identify the Reply and Post Reply {% endcomment %}
+
+  {% block custom_js %}
+<script>
+    $("#classes").change(function () {
+        // get the url of the `load_cities` view
+      var class_id = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: "{% url 'load_batch' %}",   
+        type:'POST',
+        data: {
+          'classes': class_id ,     // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+            let x = data.batchJson ; 
+            
+            let output = "<option> Select a Batch</option>" ;
+            for(i=0;i<x.length; i++){
+                output += "<option value='"+x[i].id+"'>"+x[i].batch_name+"</option>";
+            }
+            $("#batches").html(output);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+
+    $("#batches").change(function () {
+        // get the url of the `load_cities` view
+      
+      var batches= $(this).val(); // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: "{% url 'load_subject' %}",   
+        type:'POST',
+        data: {
+          
+          'batches' : batches ,
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+            let x = data.subjectJson ; 
+            
+            let output = "<option> Select a Subject</option>" ;
+            for(i=0;i<x.length; i++){
+                output += "<option value='"+x[i].id+"'>"+x[i].subject_name+"</option>";
+            }
+            $("#subjects").html(output);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+</script>
+  {% endblock custom_js %}

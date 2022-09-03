@@ -1,0 +1,253 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+{% load static %}
+
+<head>
+  <meta charset="utf-8">
+  <style>
+    @page {
+      size: A4;
+      /* margin: 1cm; */
+
+      @frame footer {
+        -pdf-frame-content: footerContent;
+        bottom: 0cm;
+        margin-left: 9cm;
+        margin-right: 9cm;
+        /* height: 1cm; */
+      }
+    }
+
+    .invoice-box {
+      max-width: 100%;
+      margin: auto;
+      padding: 10px;
+      /* height: 350px; */
+      
+      box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+      font-size: 16px;
+      line-height: 24px;
+      font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+      color: #000000;
+    }
+/* 
+    .invoice-box table {
+      width: 100%;
+      line-height: inherit;
+      text-align: left;
+    }
+
+    .invoice-box table td {
+      padding: 5px;
+      vertical-align: top;
+    }
+
+    .invoice-box table tr td:nth-child(2) {
+      text-align: right;
+    }
+
+    .invoice-box table tr.top table td {
+      padding-bottom: 20px;
+    }
+
+    .invoice-box table tr.top table td.title {
+      font-size: 30px;
+      line-height: 30px;
+      color: #333;
+    }
+
+    .invoice-box table tr.information table td {
+      padding-bottom: 40px;
+    }
+
+    .invoice-box table tr.heading td {
+      background: #eee;
+      border-bottom: 1px solid #ddd;
+      font-weight: bold;
+    }
+
+    .invoice-box table tr.details td {
+      padding-bottom: 20px;
+    }
+
+    .invoice-box table tr.item td {
+      border-bottom: 1px solid #eee;
+    }
+
+    .invoice-box table tr.item.last td {
+      border-bottom: none;
+    }
+
+    .invoice-box table tr.total td:nth-child(2) {
+      border-top: 2px solid #eee;
+      font-weight: bold;
+    } */
+/* 
+    @media only screen and (max-width: 600px) {
+      .invoice-box table tr.top table td {
+        width: 100%;
+        display: block;
+        text-align: center;
+      }
+
+      .invoice-box table tr.information table td {
+        width: 100%;
+        display: block;
+        text-align: center;
+      }
+    }
+
+    
+    .rtl {
+      direction: rtl;
+      font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+    }
+
+    .rtl table {
+      text-align: right;
+    }
+
+    .rtl table tr td:nth-child(2) {
+      text-align: left;
+    } */
+    .address {
+        font-size: 10px;
+        color:#555; ;
+        
+    }
+    .mobile {
+        font-size: 10px;
+        color:#555; ;
+        
+    }
+    .main-title{
+        font-size: 30px;
+        color: #000000;
+    }
+    .title-copy{
+      font-size: 35px;
+      color: #000000;
+      
+    }
+  </style>
+</head>
+
+<body>
+
+  
+  <img src="https://alimsacademy.com/static/images/PDFHeader.jpg/" style="width: 100%; " alt="">
+  <div class="invoice-box">
+    <table cellpadding="0" cellspacing="0">
+     
+<tr class="information">
+    <td colspan="2">
+        <table>
+            <tr>
+                  <td colspan="2" style="text-align: center;">
+                    <h5 class="title-copy">
+
+                            STUDENT COPY
+                    </h5>  
+                  </td>
+              </tr>
+            <tr>
+              
+              
+              <td>
+                Invoice No. #AAIN{{paymentStudent.id}} <br> <br>
+                Student Name : <b>{{paymentStudent.student_id.admin.first_name}} {{ paymentStudent.student_id.admin.last_name }}</b><br>
+                
+                Coaching ID : {{paymentStudent.student_id.admin.username}}<br>
+                
+                Class : {{paymentStudent.student_id.class_id.class_name}}
+                <br>
+                Batch : {{paymentStudent.student_id.batch_id.batch_name}}
+              </td>
+
+              <td>
+                Payment Info : <b>{{paymentStudent.fees_title}}</b> <br>
+                Payment Amount : <b>{{paymentStudent.amount}} BDT</b> <br>
+                Paid At : {{paymentStudent.paid_at}} <br>
+                Payment Method : {% if paymentStudent.in_cash == 1 %} By Mobile Banking<br> Transaction ID: {{paymentStudent.trans_id}} {% elif paymentStudent.in_cash == 0 %} In Cash {% endif %} <br>
+                Printed At : {{now}}
+                
+              </td>
+            </tr>
+            <tr>
+                
+            </tr>
+            <tr></tr>
+            <tr>
+                
+                <td>Recieved By</td>
+                <td style="text-align:right; margin-right:85px">Director</td>
+            </tr>
+             
+          </table>
+        </td>
+      </tr>
+      </table>
+      </div>
+      <!--<br><br>-->
+      <hr>
+      <img src="https://alimsacademy.com/static/images/PDFHeader.jpg/" style="width: 100%; " alt="">
+      <div class="invoice-box">
+
+<table cellpadding="0" cellspacing="0">
+     
+<tr class="information">
+    <td colspan="2">
+        <table>
+            <tr>
+                  <td colspan="2" style="text-align: center;">
+                    <h5 class="title-copy">
+
+                            OFFICE COPY
+                    </h5>  
+                  </td>
+              </tr>
+            <tr>
+              
+              
+              <td>
+                Invoice No. #AAIN{{paymentStudent.id}} <br> <br>
+                Student Name : <b>{{paymentStudent.student_id.admin.first_name}} {{ paymentStudent.student_id.admin.last_name }}</b><br>
+                
+                Coaching ID : <b>{{paymentStudent.student_id.admin.username}}</b><br>
+                
+                Class : {{paymentStudent.student_id.class_id.class_name}}
+                <br>
+                Batch : {{paymentStudent.student_id.batch_id.batch_name}}
+              </td>
+
+              <td>
+                Payment Info : <b>{{paymentStudent.fees_title}}</b> <br>
+                Payment Amount : <b>{{paymentStudent.amount}} BDT</b> <br>
+                Paid At : {{paymentStudent.paid_at}} <br>
+                Payment Method : {% if paymentStudent.in_cash == 1 %} By Mobile Banking<br> Transaction ID: {{paymentStudent.trans_id}} {% elif paymentStudent.in_cash == 0 %} In Cash {% endif %} <br>
+                Printed At : {{now}}
+              </td>
+            </tr>
+            <tr></tr>
+            <!--<tr></tr>-->
+            <tr>
+                
+                <td>Recieved By</td>
+                <td style="text-align:right; margin-right:85px">Director</td>
+            </tr>
+             
+          </table>
+        </td>
+      </tr>
+      </table>
+    </div>
+    
+    
+    
+    
+ 
+</body>
+
+
+</html>

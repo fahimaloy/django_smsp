@@ -1,0 +1,86 @@
+{% extends 'admin_template/base_template.html' %} {% block page_title %} Manage
+Student {% endblock page_title %} {% block main_content %} {% load static %}
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+          
+      </div>
+    </div>
+  </div>
+  <!-- /.container-fluid -->
+</section>
+
+{% endblock main_content %} {% block custom_js %}
+
+<script>
+  $(document).ready(function () {
+    $(".forloop").show();
+
+    $("#studentSearch").keyup(function () {
+      let studentSearch = $("#studentSearch").val();
+
+      if ($.trim(studentSearch).length > 0) {
+        let output = "";
+
+        $.ajax({
+          url: "{% url 'get_student_search' %}",
+          type: "POST",
+          data: { studentSearch: studentSearch },
+          dataType: "json",
+
+          success: function (data) {
+            $(".forloop").hide();
+            $(".TableDate").show();
+            if (data.status == "OK") {
+              let x = data.studentslist;
+              let y = data.studentsNameList;
+              let studentsUsernameList = data.studentsUsernameList;
+              let studentsEmailList = data.studentsEmailList;
+              let studentsAdminIDList = data.studentsAdminIDList;
+
+              for (i = 0; i < x.length; i++) {
+                let a = x[i].id;
+                console.log(a);
+                output +=
+                  "<tr><td>" +
+                  parseInt(i + 1) +
+                  "</td><td><a href='/manage_student_single/" +
+                  x[i].id +
+                  "'>" +
+                  y[i] +
+                  "</a></td><td>" +
+                  studentsUsernameList[i] +
+                  "</td><td>" +
+                  studentsEmailList[i] +
+                  "</td><td>" +
+                  x[i].presentAddress +
+                  "</td><td>" +
+                  x[i].gender +
+                  "</td><td>" +
+                  x[i].profile_pic +
+                  "</td><td>" +
+                  x[i].batch_id +
+                  "</td><td>" +
+                  x[i].class_id +
+                  "</td><td><a href='/edit_student/" +
+                  studentsAdminIDList[i] +
+                  " ' class='btn btn-success'>Edit</a><a href='/delete_student/" +
+                  studentsAdminIDList[i] +
+                  " ' class='btn btn-danger mx-2'>Delete</a></td></tr>";
+              }
+
+              // output2 += "<thead class='thead-dark'><tr><th rowspan='2' colspan='2'> Total Marks :"+ a+"/"+b +"</th><th>Working Days:"+ xy[0] +"</th><th>Present:"+ xy[1]+"</th><th>Absent:"+ xy[2] +"</th></tr></thead></table>"
+              $(".TableDate").html(output);
+
+              // console.log(data.list1);
+            }
+          },
+        });
+      }
+    });
+  });
+</script>
+
+{% endblock custom_js %}

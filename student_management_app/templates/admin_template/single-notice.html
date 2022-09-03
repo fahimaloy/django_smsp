@@ -1,0 +1,48 @@
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Notice
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">{{notice.title}}</h3>
+                            
+                        </div>
+                        <!-- /.card-header -->
+
+                        <div class="card-body">
+                            
+                                    <p>{{notice.description}}</p>
+                                    <footer class="blockquote-footer">Class: {{notice.class_id.class_name}} | Batch: {{notice.batch_id.batch_name}}</footer>
+                                
+                        </div>
+                    
+                    </div>
+                    <!-- /.card -->
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+      
+
+  {% endblock main_content %}
+
+  {% comment %} Custom JS to Identify the Reply and Post Reply {% endcomment %}
+
+  {% block custom_js %}
+
+  {% endblock custom_js %}

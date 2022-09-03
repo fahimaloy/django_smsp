@@ -1,0 +1,156 @@
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Notices
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+            {% if messages %}
+            <div class="form-group">
+            <div class="col-12">
+                {% for message in messages %}
+                {% if message.tags == "error" %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                {% elif message.tags == "success" %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Notices</h3>
+                        </div>
+                        <!-- /.card-header -->
+
+                        <form action="{% url 'save_notice' %}" class="" method="POST">
+                            {% csrf_token %}
+                            <div class="form-group m-2">
+                                <label for="classes">Class : </label>
+                                <select name="classes" id="classes" class="form-control">
+                                    <option value=""> ------------ </option>
+                                    {% for clss in classes %}
+                                        <option class="" value="{{clss.id}}"> {{clss.class_name}} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group m-2">
+                                <label for="batches">Batch : </label>
+                                <select name="batches" id="batches" class="form-control">
+                                    <option value=""> ------------ </option>
+                                </select>
+                            </div>
+                            <div class="form-group m-2">
+                                <input type="text" class="form-control" name="title" id="title" placeholder="Title for the Notice">
+                            </div>
+                            <div class="form-group m-2">
+                                <textarea name="description" id="description" class="form-control" cols="10" rows="8" placeholder="Description Of the Notice"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary m-2">Add Notice</button>
+                        </form>
+
+
+                        <div class="table-responsive">
+                            <table id="datatable" class="table">
+                                <thead class="bg-primary">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Batch</th>
+                                    <th>Class</th>
+                                    <th> Date</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                {% for notice in notices %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td><a href="{% url 'single-notice' notice_id=notice.id %}">{{ notice.title }}</a></td>
+                                    <td><a href="{% url 'single-notice' notice_id=notice.id %}">{{ notice.description }}</a></td>
+                                    <td>{{notice.class_id.class_name}}</td>
+                                    <td>{{notice.batch_id.batch_name}}</td>
+                                    <td>{{ notice.created_at }}</td>
+                                    
+                                    <td>
+                                        
+                                            <a href="{% url 'edit_notice' notice_id=notice.id %}" class="btn btn-success my-2">Edit</a>
+                                            <a href="{% url 'delete_notice' notice_id=notice.id %}" class="btn btn-danger">Delete</a>
+                                        
+                                        
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+
+                            </table>
+                        </div>
+                    
+                    </div>
+                    <!-- /.card -->
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+      
+
+  {% endblock main_content %}
+
+  {% comment %} Custom JS to Identify the Reply and Post Reply {% endcomment %}
+
+  {% block custom_js %}
+  <script>
+$(document).ready(function () {
+    $('#datatable').DataTable({
+        "searching": false
+    });
+    $("#classes").change(function () {
+        // get the url of the `load_cities` view
+        var class_id = $(this).val();  // get the selected country ID from the HTML input
+
+        $.ajax({                       // initialize an AJAX request
+            url: "{% url 'load_batch' %}",
+            type: 'POST',
+            data: {
+                'classes': class_id,     // add the country id to the GET parameters
+            },
+            success: function (data) {   // `data` is the return of the `load_cities` view function
+                let x = data.batchJson;
+
+                let output = "";
+                for (i = 0; i < x.length; i++) {
+                    output += "<option value='" + x[i].id + "'>" + x[i].batch_name + "</option>";
+                }
+                $("#batches").html(output);  // replace the contents of the city input with the data that came from the server
+            }
+        });
+
+    });
+});
+  </script>
+
+  {% endblock custom_js %}

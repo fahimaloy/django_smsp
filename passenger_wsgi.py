@@ -1,0 +1,1 @@
+from student_management_system.wsgi import application

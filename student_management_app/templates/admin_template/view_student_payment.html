@@ -1,0 +1,97 @@
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Payments Applied by Students
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Payments Applied by Students</h3>
+                        </div>
+                        <!-- /.card-header -->
+
+                        <div class="table-responsive">
+                            <table id="datatable" class="table">
+                                <thead>
+                                <tr>
+                                    <th>#SL</th>
+                                    <th>Coaching ID</th>
+                                    <th>Student Name</th>
+                                    <th>Fees Title</th>
+                                    <th>Amount</th>
+                                    <th>Additonal Fees</th>
+                                    <th>Additional Fees Amount</th>
+                                    <th>Payment Recieved</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                {% for payment in payments %}
+                                {% if payment.action != 0 %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ payment.student_id.admin.username }}</td>
+                                    <td>{{ payment.student_id.admin.first_name }} {{ payment.student_id.admin.last_name }}</td> 
+                                    <td>{{ payment.fees_title }}</td>
+                                    <td>{{ payment.amount }}  ৳</td>
+                                    <td>{{payment.extra_fees_title}}</td>
+                                    <td>{{payment.extra_amount}} ৳</td>
+                                    <!-- <td>{{payment.fees_date}}</td> -->
+                                    
+                                    <!-- <td>{{ payment.bkash_nmb }}</td>
+                                    <td>{{ payment.trans_id }}</td> -->
+                                    <td>{{ payment.paid_at }}</td>
+                                    <td>
+                                        {% if payment.action == 3 %}
+                                            <a href="{% url 'student_payment_approve' payment_id=payment.id %}" class="btn btn-success">Approve</a>
+                                            <a href="{% url 'student_payment_reject' payment_id=payment.id %}" class="btn btn-danger my-2">Reject</a>
+                                        {% elif payment.action == 1 %}
+                                            <button class="btn btn-warning" disabled="disabled">Approved</button>
+                                        {% elif payment.action == 2 %}
+                                            <button class="btn btn-danger" disabled="disabled">Rejected</button>
+                                        {% endif %}
+                                        
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+
+                            </table>
+                        </div>
+                    
+                    </div>
+                    <!-- /.card -->
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+      
+
+  {% endblock main_content %}
+
+  {% comment %} Custom JS to Identify the Reply and Post Reply {% endcomment %}
+
+  {% block custom_js %}
+<script>
+$(document).ready(function () {
+        $('#datatable').DataTable({
+            "searching": false
+        });
+});
+</script>
+  {% endblock custom_js %}

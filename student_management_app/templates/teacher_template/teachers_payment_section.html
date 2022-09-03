@@ -1,0 +1,301 @@
+{% extends 'teacher_template/base_template.html' %} 
+{% block page_title %} 
+Teachers Payment Details 
+{% endblock page_title %} 
+{% block main_content %} 
+{% load static %}
+
+<section class="content">
+  <div class="container-fluid">
+                            {% if messages %}
+                              <div class="form-group">
+                              <div class="col-12">
+                                  {% for message in messages %}
+                                  {% if message.tags == "error" %}
+                                      <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                      {{ message }}
+                                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                      </button>
+                                      </div>
+                                  {% elif message.tags == "success" %}
+                                      <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                      {{ message }}
+                                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                      </button>
+                                      </div>
+                                  {% endif %}
+                                  {% endfor %}
+                              </div>
+                          </div>
+                          {% endif %}
+    <div class="row">
+        <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h3 class="h3" id="totalPaymentList">৳ {{ totalPaymentList }}</h3>
+                <!-- <h3 class="h3-show" id="totalpaidlist"></h3> -->
+
+                <p>Total Payments</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-stats-bars"></i>
+              </div>
+              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-info">
+              <div class="inner">
+                 
+                  <h3 class="h3" id="paidPaymentLists">৳ {{ paidPaymentLists }}</h3>
+                  <!-- <h3 class="h3-show" id="totalobtainedlist"></h3> -->
+                  
+                  
+                  
+                <p>Total Paid Honorarium</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-stats-bars"></i>
+              </div>
+              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div> 
+          <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-danger">
+              <div class="inner">
+                <h3 class="h3" id="duePayment">৳ {{ duePayment }}</h3>
+                <!-- <h3 class="h3-show" id="totalAElist"></h3> -->
+
+                <p>Total Due </p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-stats-bars"></i>
+              </div>
+              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          
+          
+        
+    </div>
+    
+    <div class="row first-one">
+        
+      <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Teachers Payment Details</h3>
+            </div>
+
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>Start Date <span class="badge badge-primary" id="bttnToday">Today</span>
+                            </label>
+                            <input type="date" id="inputVal" class="form-control" name="start_date" />
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>End Date<span class="badge badge-primary" id="bttn2Today">Today</span>
+                            </label>
+                            <input type="date" id="inputVal2" class="form-control" name="end_date" />
+                        </div>
+                    </div>
+
+                </div>
+                
+            </div><!-- card-body -->
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-outline-primary ml-1 " id="fetch_details">Fetch Details</button>
+             
+                        </div>
+                    </div>
+                </div>
+            <div class="card-body">
+                
+                
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="table-responsive">
+                            <table id="datatable" class="table">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <td colspan="6" class="bg-info" style="text-align: center;">
+
+                                            Teachers Total Honorarium
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>#SL</th>
+                                        <th>Class</th>
+                                        <th>Batch</th>
+                                        <th>Subject</th>
+                                        <th>Class Date</th>
+                                        <th>Honorarium</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-hide">
+                                    {% for rg in reg %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td>{{rg.pcc_id.class_id.class_name}}</td>
+                                        <td>{{rg.pcc_id.batch_id.batch_name}}</td>
+                                        <td>{{rg.pcc_id.subject_id.subject_name}}</td>
+                                        <td>{{rg.class_date}}</td>
+                                        <td>{{rg.per_class_charge}}  ৳</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tbody class="table-show" id="table-show-1">
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="table-responsive">
+                            <table id="datatable1" class="table">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <td colspan="5" class="bg-success" style="text-align: center;">
+                                            
+                                            
+                                            
+                                            Paid Honorariums
+                                            
+                                        </td>
+                                    </tr>
+                                    
+                                        <tr>
+                                            <th>#SL</th>
+                                            <th>Paying Date</th>
+                                            <th>Honorarium Amount</th>
+                                            <th>Paid Upto</th>
+                                        </tr>
+                                        
+                                </thead>
+                                <tbody  class="table-hide">
+                                    {% for pt in payments %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td>{{pt.paying_date}}</td>
+                                        <td>{{pt.payment_amount}}  ৳</td>
+                                        <td>{{pt.payment_upto}}</td>
+                                        
+                                        
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tbody class="table-show" id="table-show-2">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            
+
+
+        </div><!-- card -->
+      </div><!-- col-md-12 -->
+    </div> <!-- row first-one -->
+  </div><!-- /.container-fluid -->
+</section>
+{% comment %} Modal to Reply Feedback {% endcomment %}
+
+{% endblock main_content %} {% block custom_js %}
+
+<script>
+  $(document).ready(function () {
+    var table1 = $('#datatable').DataTable({
+        "searching": false
+    });
+    var table2 = $('#datatable1').DataTable({
+        "searching": false
+    });
+
+            $(".table-show").hide();
+            $("#fetch_details").click(function(){
+                
+                let start_date = $("#inputVal").val()
+                let end_date = $("#inputVal2").val()
+                
+                
+                let output="";
+                let output2="";
+                
+
+                $.ajax({
+                    url:"{% url 'get_teacher_payments' %}",
+                    type:'POST',
+                    data:{start_date:start_date , end_date:end_date},
+                    dataType: "json",
+
+                    success: function(data){
+                        $(".table-show").show();
+                        $(".table-hide").hide();
+                        if(data.status == "OK"){
+                            console.log(data)
+                            let x = data.reg;
+                            let y = data.payments;
+                
+                                for(i=0;i<x.length; i++){
+                                    
+                                    output += "<tr><td>"+ parseInt(i+1) +"</td><td>"+data.adetails[i].clss+"</td><td>"+data.adetails[i].batch+"</td><td>"+data.adetails[i].subject+"</td><td>"+x[i].class_date+"</td><td>"+x[i].per_class_charge+" ৳</td></tr>";
+
+                                }
+
+                                for (i=0;i<y.length;i++){
+                                    output2 += "<tr><td>"+ parseInt(i+1) +"</td><td>"+y[i].paying_date+"</td><td>"+y[i].payment_upto+"</td><td>"+y[i].payment_amount+" ৳ </td></tr>";
+                                }
+
+                
+                        }
+                            
+                            
+                            $("#table-show-1").html(output);
+                            $("#table-show-2").html(output2);
+                
+                            $('#totalPaymentList').html(data.totalPaymentList);
+                            $('#paidPaymentLists').html(data.paidPaymentList);
+                            $('#duePayment').html(data.duePayment);
+                            
+                            
+
+               
+                            
+                            // console.log(data.paymentTeacherList);
+                            
+
+
+                        },
+                        
+
+                    
+                
+                });
+
+                    
+                    
+                
+
+            });
+    
+  });
+</script>
+
+{% endblock custom_js %}

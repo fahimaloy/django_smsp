@@ -1,0 +1,60 @@
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Leave Apply by teachers
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Class Registry for Teachers</h3>
+                    </div>
+                    <!-- /.card-header -->
+
+                             
+                                
+                    {% for tchr in teacher %}            
+
+                        <a href="/teacher_payment_single/{{tchr.id}}">{{tchr.admin.first_name}} {{tchr.admin.last_name}}</a>
+
+                    {% endfor %}
+                            
+                    
+                        <!-- /.card-body -->
+
+                        <div class="card-footer">
+                        
+                        </div>
+
+                    </form>
+
+                    </div>
+                    <!-- /.card -->
+
+
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+
+
+  {% endblock main_content %}
+
+  {% comment %} Custom JS to Identify the Reply and Post Reply {% endcomment %}
+
+  {% block custom_js %}
+
+  {% endblock custom_js %}

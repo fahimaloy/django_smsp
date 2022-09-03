@@ -1,0 +1,455 @@
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Batchwise Payments Details
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+    <div class="container-fluid">
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-dark">
+                    <div class="card-header">
+                        <h3 class="card-title">Batchwise Payments Details</h3>
+
+                    </div>
+                     {% comment %} Display Messages {% endcomment %}
+                                {% if messages %}
+                                <div class="form-group">
+                                <div class="col-12">
+                                    {% for message in messages %}
+                                    {% if message.tags == "error" %}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% elif message.tags == "success" %}
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                                </div>
+                                {% endif %}
+                    <div class="card-body">
+                        
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Class :</label>
+                                    <select name="classes" id="classes" class="form-control">
+                                        <option>--------------</option>
+                                        {% for cls in classes %}
+                                        <option value="{{cls.id}}">{{cls.class_name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Batch :</label>
+                                    <select name="batch" id="batch" class="form-control">
+                                        <option>--------------</option>
+                                    </select>
+                                    
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    
+                                    <input type="date" id="inputVal" class="form-control my-2" name="start_date" />
+                                </div>                                
+                            </div>                            
+                            
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    
+                                    <input type="date" id="inputVal2" class="form-control my-2" name="start_date" />
+                                </div>                                
+                            </div>                            
+                            
+                            
+                        </div>
+                        
+                        <div class="row">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-info ml-1 secondInput" id="fetch_data">All Payment </button>
+                                <button type="button" class="btn btn-dark ml-1 secondInput" id="fetch_unpaid">All Unpaid </button>
+                                <button type="submit" id="dateSearch" class="btn btn-info m-1"><i class="fas fa-calendar"></i>  Filter Payments</button>
+                                <button type="submit" id="dateSearchUnpaid" class="btn btn-dark m-1"><i class="fas fa-calendar"></i>  Filter Unpaid</button>
+                                
+                            </div>
+                        </div>
+                    </div> <!-- card-body -->
+                </div> <!-- card card-dark -->
+                
+                
+                
+                
+
+
+
+                <div class="card card-dark TableDate">
+                    <div class="card-body">
+                        
+                        <table class="table">
+                            
+                            <tr class="bg-light" id="filteredTable3">
+
+                            </tr>
+                        
+                        </table>
+                        <div class="table-responsive">
+                        <table class="table">
+                                
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th colspan="12" style="text-align: center;">Payments by Students</th>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th>#ID</th>
+                                        <th>Student Name</th>
+                                        <th>Coaching ID</th>
+                                        <th>Fees Title</th>
+                                        <th>Amount</th>
+                                        <th>Additional</th>
+                                        <th>Paid At</th>
+                                        <th>Payment Method</th>
+                                        <th>Bkash Number</th>
+                                        <th>Transaction ID</th>
+                                        <th>Download</th>
+                                        <th>Action</th>
+
+                                    </tr>
+                                </thead>
+                            
+
+
+                                <tbody id="filteredTable">
+
+                                </tbody>
+                                
+                            </table>
+                        </div>
+                        
+                            <!-- <table class="table table-primary table-striped my-5">
+                                <thead>
+                                    <tr>
+                                        <th colspan="3" style="text-align: center;">Fees Details</th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="col">#ID</th>
+                                        <th scope="col">Fees Title</th>
+                                        <th scope="col">Amoount</th>
+
+                                    </tr>
+                                </thead>
+
+
+                                <tbody id="filteredTable2">
+
+                                </tbody>
+
+                            </table> -->
+                        </div>
+                        
+                    
+                </div>
+                <div class="card card-dark TableUnpaid">
+                    <div class="card-body">
+                        
+                        
+                        <div class="table-responsive">
+                        <table class="table">
+                                
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th colspan="8" style="text-align: center;">Unpaid Students</th>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th>#ID</th>
+                                        <th>Student Name</th>
+                                        <th>Fees Title</th>
+                                        <th>Fees Date</th>
+                                        <th>Due Amount</th>
+                                        <th>Action</th>
+                                        
+
+                                    </tr>
+                                </thead>
+                            
+
+                                <tbody id="unpaidTable">
+        
+                                </tbody>
+
+                                
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- col-md-12 -->
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+{% endblock main_content %}
+
+{% block custom_js %}
+
+<script>
+ $("#classes").change(function () {
+        // get the url of the `load_cities` view
+      var class_id = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: "{% url 'load_batch' %}",   
+        type:'POST',
+        data: {
+          'classes': class_id ,     // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+            let x = data.batchJson ; 
+            
+            let output = "" ;
+            for(i=0;i<x.length; i++){
+                output += "<option value='"+x[i].id+"'>"+x[i].batch_name+"</option>";
+            }
+            $("#batch").html(output);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+
+    $(document).ready(function () {
+        $("#dateSearchUnpaid").click(function () {
+            let output = ""
+            let start_date = $("#inputVal").val()
+            let end_date = $("#inputVal2").val()
+            let classes = $("#classes").val()
+            let batch = $("#batch").val()
+            $.ajax({
+                url: "{% url 'student_unpaid_date_filter' %}",
+                type: 'POST',
+                data: { classes: classes, batch: batch, start_date: start_date, end_date: end_date },
+                dataType: "json",
+
+                success: function (data) {
+                    $(".TableDate").hide();
+                    $(".TableUnpaid").show();
+
+                    if (data.status == "OK") {
+                        // let w = data.list1 ;
+                        let x = data.unpaidDetails;
+                        let y = data.student_name;
+                        let z = data.student_id;
+                        // let xy = data.dates;
+
+                        for (i = 0; i < x.length; i++) {
+                            var TOTALAMOUNT = parseInt(x[i].amount)+parseInt(x[i].extra_amount)
+
+                            output += "<tr><td>" + parseInt(i + 1) + "</td><td><a href='/manage_student_single/" + z[i] + "/'>" + y[i] + "</a></td><td>" + x[i].fees_title + "</td><td>" + x[i].fees_date + "</td><td>" + TOTALAMOUNT + "  ৳</td><td><a href='/ask_for_payment/" + z[i] + "/" + x[i].amount + " ' class='btn btn-success'>Ask For Payment</a></td></tr>";
+
+
+                        }
+
+
+                        $("#unpaidTable").html(output);
+
+                        console.log(output);
+
+
+
+                    }
+
+
+                },
+
+            });
+    })
+    
+
+    $("#dateSearch").click(function(){
+        let start_date = $("#inputVal").val()
+        let end_date = $("#inputVal2").val()
+        let classes = $("#classes").val()
+        let batch = $("#batch").val()
+        $.ajax({
+            url: "{% url 'student_payment_batch_date_filter' %}",
+            type: 'POST',
+            data: { classes: classes, batch: batch , start_date:start_date , end_date:end_date },
+            dataType: "json",
+
+            success: function (data) {
+                $(".TableUnpaid").hide()
+                $(".TableDate").show();
+
+                if (data.status == "OK") {
+                   
+                    let x = data.studentJson;
+                    let y = data.feesJson;
+                    let output = "";
+
+
+                    console.log(x[0].name);
+                    for (i = 0; i < x.length; i++) {
+                        
+                        output += "<tr class='table-active'><td>" + parseInt(i + 1) + "</td><td>" + x[i].name + "</td><td>" + x[i].coachingID + "</td><td>"+y[i].fees_title+"</td><td>" + y[i].amount + "  ৳</td><td>"+y[i].extra_fees_amount+"["+y[i].extra_amount+"]</td><td>" + y[i].paid_at ;
+                        if (y[i].in_cash == 0) {
+                            output += "</td><td colspan='3'>In Cash";
+                        }
+                        else {
+                            output += "</td><td>bKash</td><td>" + y[i].bkash_nmb + "</td><td>" + y[i].trans_id;
+
+                        }
+                        output += "</td><td><a href='/download-invoice/"+y[i].id+"/'>Download</a></td><td><a href='/delete_student_payment/"+y[i].id+"/' class='btn btn-danger' >Delete</a></td></tr>"
+
+
+
+
+                    }
+
+
+                    $("#filteredTable").html(output);
+
+
+
+
+                }
+                // console.log(x);
+
+            },
+
+        });
+
+    })
+
+
+        $(".TableDate").hide()
+        $("#fetch_data").click(function(){
+                
+                let classes = $("#classes").val()
+                let batch = $("#batch").val()
+                
+                let output="";
+                let output2="";
+
+                $.ajax({
+                    url:"{% url 'get_filter_payment_all' %}",
+                    type:'POST',
+                    data:{classes : classes , batch : batch},
+                    dataType: "json",
+
+                    success: function(data){
+                        $(".TableUnpaid").hide()
+                        $(".TableDate").show();
+                        
+                        if(data.status == "OK"){
+                            let w = data.studentID2List ;
+                            let x = data.paymentList;
+                            let y = data.studentList;
+                            let z = data.studentIDList ;
+                            let dates = data.dates;
+
+                                for(i=0;i<x.length; i++){
+                                    
+                                    output += "<tr class='table-active'><td>"+ parseInt(i+1) +"</td><td>"+ y[i] +"</td><td>"+ data.coachingID[i] +"</td><td>"+x[i].fees_title+"</td><td>"+x[i].amount+"  ৳</td><td>"+ dates[i];
+                                    if(x[i].in_cash == 0){
+                                        output += "</td><td colspan='3'>In Cash</td>";
+                                    }
+                                    else{
+                                        output += "</td><td>bKash</td><td>"+ x[i].bkash_nmb +"</td><td>"+ x[i].trans_id+"</td>";
+                                    }
+                                    
+                                    output += "<td><a href='/download-invoice/"+x[i].id+"/'>    Download</td><td><a href='/delete_student_payment/"+x[i].id+"/' class='btn btn-danger' >Delete</a></td></tr>"
+                                        
+                                    
+                                }
+                                
+                            
+                            $("#filteredTable").html(output);
+                            
+                            console.log(output);
+                            
+
+
+                        }
+                        // console.log(x);
+
+                    },
+                    
+                });
+
+        });
+
+        $(".TableUnpaid").hide()
+        $("#fetch_unpaid").click(function(){
+                
+                let classes = $("#classes").val()
+                let batch = $("#batch").val()
+                
+                let output="";
+                // let output2="";
+
+                $.ajax({
+                    url:"{% url 'get_unpaid_payments' %}",
+                    type:'POST',
+                    data:{classes : classes , batch : batch},
+                    dataType: "json",
+
+                    success: function(data){
+                        $(".TableDate").hide();
+                        $(".TableUnpaid").show();
+                        
+                        if(data.status == "OK"){
+                            // let w = data.list1 ;
+                            let x = data.unpaidDetails;
+                            let y = data.student_name;
+                            let z = data.student_id;
+                            let xy = data.dates;
+
+                                for(i=0;i<x.length; i++){
+                                    var amountTotal = parseInt(x[i].amount) + parseInt(x[i].extra_amount)
+                                    
+                                    output += "<tr><td>"+ parseInt(i+1) +"</td><td><a href='/manage_student_single/"+ z[i] +"/'>"+y[i]+"</a></td><td>"+ x[i].fees_title +"</td><td>"+xy[i]+"</td><td>"+amountTotal  +"  ৳</td><td><a href='/ask_for_payment/"+ z[i]+"/"+x[i].amount +" ' class='btn btn-success'>Ask For Payment</a></td></tr>";
+                                    
+                                    
+                                }
+                                
+                            
+                            $("#unpaidTable").html(output);
+                            
+                            console.log(output);
+                            
+
+
+                        }
+                        
+
+                    },
+                    
+                });
+
+        });
+
+    });
+
+
+
+</script>
+
+{% endblock custom_js %}

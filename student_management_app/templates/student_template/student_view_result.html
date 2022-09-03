@@ -1,0 +1,259 @@
+{% extends 'student_template/base_template.html' %}
+
+{% block page_title %}
+    Result
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-dark">
+                        <div class="card-header">
+
+
+                            <h3 class="card-title">Result</h3>
+                        </div>
+                        <div class="card-body">
+   
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Start Date <span class="badge badge-primary" id="bttnToday">Today</span>
+                                        </label>
+                                        <input type="date" id="inputVal" class="form-control" name="start_date" />
+                                    </div>
+                                </div>
+    
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>End Date<span class="badge badge-primary" id="bttn2Today">Today</span>
+                                        </label>
+                                        <input type="date" id="inputVal2" class="form-control" name="end_date" />
+                                    </div>
+                                </div>
+    
+                            </div>
+    
+    
+                        </div>
+
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-primary" id="fetch_data">Fetch Details</button>
+
+
+                    </div>
+
+                         <div class="card-body table-hide">
+                            {% for exam in examinations %}
+                            
+                           <div class="table-responsive">
+                                <table class="table">
+                                    <thead class="thead-light">
+                                        <thead class="thead bg-info">
+                                            <tr>
+                                                <th colspan="5" style="text-align: center;">{{ exam.exam_name }}---{{ exam.exam_date }}</th>
+                                            </tr>
+
+                                        </thead>
+                                        
+                                    <tr>
+                                        <!--<th>#SL</th>-->
+                                        <th>Subject</th>
+                                        <th>Total Marks</th>
+                                        <th>Obtained Marks</th>
+                                        <th>GPA</th>
+                                    </tr>
+                                    </thead>
+                                    
+                                    {% for row in student_result %}
+                                        
+                                    
+                                        {% if row.exam_id.id == exam.id %}
+                                    <tr>
+                                        <!--<td>{{forloop.counter}}</td>-->
+                                        <td>{{ row.subject_id.subject_name }}</td>
+                                        <td class="tM">{{ row.subject_assignment_marks }}</td>
+                                        <td class="oM">{{ row.subject_exam_marks }}</td>
+                                        <td>
+                                            
+                                            {% if row.gpa == 5.0  %}
+                                                <span class="alert alert-success">{{row.gpa}}</span>
+                                            {% elif row.gpa >= 4.0 %}
+                                                <span class="alert alert-primary">{{row.gpa}}</span>
+                                            {% elif  row.gpa == 0 %}
+                                                <span class="alert alert-danger">{{row.gpa}}</span>
+                                            {% else %}
+                                                <span class="alert alert-warning">{{row.gpa}}</span>
+                                            {% endif %}
+                                        </td>
+
+                                    </tr>
+
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                    
+                                    {% endfor %}
+
+                                    <table class="table">
+                                    <thead class="thead-dark ">
+                                       
+                                        <tr>
+                                            <th rowspan="2" colspan="2" > Total Marks : <span class="totaloM" > </span> / <span class="totaltM"></span> </th>
+                                            
+                                            <th>Working Days: {{totalWorkingDay}}</th>
+                                            <th>Present: {{totalPresent}}</th>
+                                            <th>Absent: {{totalAbsent}}</th>
+                                            
+                                        </tr>
+                                    </thead>
+                                </table>
+                                </table>
+                            </div>
+                            
+                        </div>
+                        <!-- /.card-body -->
+
+
+
+
+
+
+                        <div class="card-body TableDate">
+                           <div class="table-responsive">
+                                <table id="filteredTable" class="table">
+                                  
+                                   
+
+
+                                    <table id="shortResult" class='table'>
+                                        
+
+                                    </table>
+                                </table>
+                           </div>
+                                
+                        </div>
+
+
+
+
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+  {% endblock main_content %}
+
+{% block custom_js %}
+<script>
+    $( document ).ready(function() {
+    
+
+        var oM = $('.oM');
+        var tM = $('.tM');
+        
+        var totaltM = 0;
+        var totaloM = 0;
+        $.each(oM, function (i, OM ) {
+            var om = $(this).text();
+            
+            totaloM = totaloM + parseInt(om, 10);
+            
+        });
+        $.each(tM, function (i, TM ) {
+            var tm = $(this).text();
+            
+            totaltM = totaltM + parseInt(tm, 10);
+            
+        });
+        $('.totaloM').text(totaloM);
+        $('.totaltM').text(totaltM);
+
+    
+    });
+</script>
+<script>
+
+        
+        $(".TableDate").hide();
+        $(".table-hide").show();
+        $("#fetch_data").click(function(){
+                
+                let start_date = $("#inputVal").val()
+                let end_date = $("#inputVal2").val()
+
+                let output="";
+                let output2="";
+
+                $.ajax({
+                    url:"{% url 'get_student_report_card' %}",
+                    type:'POST',
+                    data:{start_date:start_date , end_date:end_date},
+                    dataType: "json",
+
+                    success: function(data){
+                        $(".TableDate").show();
+                        $(".table-hide").hide();
+                        if(data.status == "OK"){
+                            
+                            let a = data.totalMarksVal;
+                            let b = data.obtainedMarksVal;
+                            let x = data.student_result_data;
+                            let y = data.examinations_data;
+                            let z = data.list1;
+                            let xy = data.list2;
+                            let totalMarksIDlist = data.totalMarksIDList;
+                            // let tmlist = data.tmlist;
+                            let subjectNamelist = data.subjectNamelist;
+
+                            for(k=0;k<y.length;k++){
+                                output += "<thead class='thead bg-info'><tr><th colspan='2' style='text-align:center'>"+y[k].exam_name+"</th><th style='text-align:center' colspan='3'></tr></thead>"
+                                        
+                                            if(totalMarksIDlist[k] == y[k].id){
+                                            output += "<thead><tr><th>#ID</th><th>Subject</th><th>Total Marks</th><th>Obtained Marks</th><th>status</th></tr></thead>";
+                                        }
+                                        
+                                for(i=0;i<x.length; i++){
+                                    
+                                    if(z[i]==y[k].id){
+                                    output += "<tr><td>"+ parseInt(i+1) +"</td><td>"+subjectNamelist[i]+"</td><td class='tM'>"+x[i].subject_assignment_marks+"</td><td class='oM'>"+x[i].subject_exam_marks+"</td><td>"+x[i].gpa+"</td></tr>";
+                                    }
+                                }
+                        }
+                            
+                            output2 += "<thead class='thead-dark'><tr><th rowspan='2' colspan='2'> Total Marks :"+ b+"/"+a +"</th><th>Working Days:"+ xy[0] +"</th><th>Present:"+ xy[1]+"</th><th>Absent:"+ xy[2] +"</th></tr></thead></table>"
+                            console.log(output);
+                            $("#filteredTable").html(output);
+                            $("#shortResult").html(output2);
+
+                            
+                          
+                            
+                            
+                          
+
+
+                        }
+                        
+
+                       
+                    },
+                    
+                });
+
+            });
+</script>
+
+{% endblock custom_js %}

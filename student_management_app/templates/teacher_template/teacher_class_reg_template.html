@@ -1,0 +1,249 @@
+{% extends 'teacher_template/base_template.html' %}
+
+{% block page_title %}
+    Class Reg. & Payments 
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Class Registry for Teachers</h3>
+                    </div>
+                    <!-- /.card-header -->
+
+                                {% comment %} Display Messages {% endcomment %}
+                                {% if messages %}
+                                <div class="form-group">
+                                <div class="col-12">
+                                    {% for message in messages %}
+                                    {% if message.tags == "error" %}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% elif message.tags == "success" %}
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                                </div>
+                                {% endif %}
+
+   
+                             
+                                
+                                
+                            
+                    <form method="POST" action="{% url 'teacher_class_register_save' %}">
+                        {% csrf_token %}
+                        <div class="card-body">
+                          
+
+                            <!-- <div class="form-group">
+                                <label>Leave Date </label>
+                                <input type="date" name="leave_date" class="form-control" />
+                            </div> -->
+
+                            <div class="form-group">
+                                <select name="pcc" class="form-control" id="pcc"  required>
+                                    {% for pcc in pcc %}    <option value="{{pcc.id}}" >{{pcc.class_id.class_name}} -- {{pcc.batch_id.batch_name}} -- {{pcc.subject_id.subject_name}}</option>{% endfor %}
+                                    
+    
+                                </select>
+                                <label>Class Date </label>
+                                <input type="date" name="class_date" id="class_date" class="form-control"  required/>
+                                <label>From </label>
+                                <input type="time" name="from_time" class="form-control" required />
+                                <label>To </label>
+                                <input type="time" name="to_time" class="form-control" required/>
+                                
+                            </div>
+
+
+                        </div>
+                        <!-- /.card-body -->
+
+                        <div class="card-footer">
+                        <a id="show" class="btn btn-danger"> Check Availablity</a>
+                        <button type="submit" id="hide" class="btn btn-primary"> Register a Class </button>
+                        </div>
+
+                    </form>
+
+                    </div>
+                    <!-- /.card -->
+
+
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">Class & Payment History</h3>
+                        </div>
+
+                        <div class="card-body">
+                           <div class="table-responsive">
+                                <table id="datatable" class="table">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th>#SL</th>
+                                        <th>Class Name</th>
+                                        <th>Batch</th>
+                                        <th>Subject Name</th>
+                                        <th>Class Date</th>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Payment</th>
+                                        
+                                        <th>Status</th>
+                                    </tr>
+                                    </thead>
+                                    
+                                    {% for reg in reg_data %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ reg.pcc_id.class_id.class_name }}</td>
+                                        <td>{{ reg.pcc_id.batch_id.batch_name }}</td>
+                                        <td>{{ reg.pcc_id.subject_id.subject_name }}</td>
+                                        <td>{{ reg.class_date }}</td>
+                                        <td>{{ reg.from_time }}</td>
+                                        <td>{{ reg.to_time }}</td>
+                                        <td>{{ reg.per_class_charge }} <b>৳</b> </td>
+                                        
+                                        <td>
+                                            {% if reg.status == 1 %}
+                                                <span class="alert alert-success">Approved</span>
+                                            {% elif reg.status == 2 %}
+                                                <span class="alert alert-danger">Rejected</span>
+                                            {% else %}
+                                                <span class="alert alert-warning">Pending</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+
+                                    {% endfor %}
+
+                                    <tr>
+                                        <td colspan="6" align="center" ><b>Total :</b></td>
+                                        <td colspan="2"><b>{{al}} ৳</b></td>
+                                    </tr>
+            
+                                </table>
+                            </div>
+                        </div>
+
+
+                        <div class="card-header" style="display: flex; justify-content: space-around;">
+                            
+                            <h3 class="card-title">Class & Payment History</h3> 
+                            <h3 class="card-title">Total Payment : {{al}} BDT</h3>
+                            <h3 class="card-title">Payment Paid : {{tplv}} BDT</h3>
+                            <h3 class="card-title">Due Payment : {{due_payment}} BDT</h3>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                 <table id="datatable1" class="table">
+                                     <thead class="thead-light">
+                                     <tr>
+                                         <th>#SL</th>
+                                        <th>Paying Date</th>
+                                         <th>Pay Upto</th>
+                                         <th>Amount</th>
+                                         
+                                     </tr>
+                                     </thead>
+                                     
+                                     {% for payment in payment_data %}
+                                     <tr>
+                                         <td>{{ forloop.counter }}</td>
+                                         <td>{{payment.paying_date}}</td>
+                                         <td>{{payment.payment_upto}}</td>
+                                         <td>{{ payment.payment_amount }} <b>৳</b> </td>
+                                     </tr>
+                                     {% endfor %}
+                                     
+                                    
+                                        
+                                    
+                                     <tr>
+                                         <td colspan="3" align="center" ><b>Total :</b></td>
+                                         <td colspan="2"><b>{{tplv}} ৳</b></td>
+                                     </tr>
+             
+                                 </table>
+                             </div>
+                         </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+  {% endblock main_content %}
+
+{% block custom_js %}
+<script>
+
+$(document).ready(function () {
+    $('#datatable').DataTable({
+        "searching": false
+    });
+    $('#datatable1').DataTable({
+        "searching": false
+    });
+
+
+    $("#hide").hide();
+    $("#show").click(function () {
+
+        // Displaying Students Based on Staff, Course and Session Enrolled
+
+        var pcc_id = $("#pcc").val()
+        var date = $("#class_date").val()
+
+        $.ajax({
+            url: "{% url 'check_class_reg_exist' %}",
+            type: 'POST',
+            data: { pcc_id: pcc_id, date: date }
+        })
+            .done(function (response) {
+                //console.log(response);
+
+                if (response == "True") {
+                    $(".username_error").remove();
+                    $("<span class='username_error' style='color: red; padding: 5px; font-weight: bold;'> You have already been Registered for this Class </span>").insertAfter("#show")
+                }
+                else {
+                    $(".username_error").remove();
+                    $("<span class='username_error' style='color: green; padding: 5px; font-weight: bold;'> Go Ahead. </span>").insertAfter("#show")
+                    // $("#show").hide();
+                    $("#hide").show();
+                }
+            });
+    });
+});
+</script>
+{% endblock custom_js %}

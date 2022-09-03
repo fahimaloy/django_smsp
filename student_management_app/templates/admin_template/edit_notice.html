@@ -1,0 +1,70 @@
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Notices
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Notices</h3>
+                        </div>
+                        <!-- /.card-header -->
+
+                        <form action="{% url 'edit_notice_save' %}" class="" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{notices.id}}" name="notice_id" >
+                            <div class="form-group m-2">
+                                <label for="classes">Class : </label>
+                                <select name="classes" id="classes" value="{{notices.class_id.class_name}}" class="form-control">
+                                    {% for clss in classes %}
+                                        <option class="" value="{{clss.id}}"> {{clss.class_name}} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group m-2">
+                                <label for="batches">Batch : </label>
+                                <select name="batches" id="batches" vlaue="{{notices.batch_id.batch_name}}" class="form-control">
+                                    {% for batch in batches %}
+                                        <option class="" value="{{batch.id}}"> {{batch.batch_name}} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group m-2">
+                                <input type="text" class="form-control" name="title" id="title" value="{{notices.title}}" placeholder="{{notices.title}}">
+                            </div>
+                            <div class="form-group m-2">
+                                <textarea name="description" id="description" class="form-control" cols="10" rows="8" placeholder="Description Of the Notice"> {{notices.description}} </textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary m-2">Add Notice</button>
+                        </form>
+
+
+     
+                    </div>
+                    <!-- /.card -->
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+      
+
+  {% endblock main_content %}
+
+  {% comment %} Custom JS to Identify the Reply and Post Reply {% endcomment %}
+
+  {% block custom_js %}
+
+  {% endblock custom_js %}

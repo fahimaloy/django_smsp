@@ -1,0 +1,322 @@
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Add Student
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Add Student</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <!-- form start -->
+                    <!-- {% url 'add_student_save' as action_path %} -->
+
+
+                    <form role="form" method="POST" enctype="multipart/form-data" action="{% url 'add_student_save' %}">
+                        {% csrf_token %}
+
+                        
+                                {% comment %} Display Messages {% endcomment %}
+                                {% if messages %}
+                                <div class="form-group">
+                                <div class="col-12">
+                                    {% for message in messages %}
+                                    {% if message.tags == "error" %}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% elif message.tags == "success" %}
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            
+                            <div class="card-body">
+                            <div class="form-group">
+                                <label>Email address</label>
+                                <input type="email" class="form-control" name="email" placeholder="Enter email" id="id_email" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>CoachingID</label>
+                                <input type="text" class="form-control" name="username" placeholder="CoachingID" id="id_username" required>
+                            </div>
+
+                            
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" class="form-control" name="password" placeholder="Password" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" class="form-control" name="first_name" placeholder="First Name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" class="form-control" name="last_name" placeholder="Last Name"required>
+                                
+                            </div>
+
+                            <div class="form-group">
+                                <label>Gender</label>
+                                <select name="gender" id="gender" class="form-control" required>
+                                    <option value="Male" > Male </option>
+                                    <option value="Female" > Female </option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Class</label>
+                                <select name="class_id" id="class_id" class="form-control" required>
+                                    <option> ------------ </option>
+                                    {% for class in classes %}
+                                    <option value="{{class.id}}"> {{class.class_name}} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Batch</label>
+                                <select name="batch_id" id="batch_id" class="form-control" required>
+                                    <option> ------------ </option>
+                                    
+                                </select>
+
+                            <div class="form-group">
+                                <label>School/College</label>
+                                <input type="text" class="form-control" name="school" placeholder="School / College" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Date Of Birth</label>
+                                <input type="date" class="form-control" name="dateOfBirth" placeholder="Date of Birth" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Father's Name</label>
+                                <input type="text" class="form-control" name="fathersName" placeholder="Father's Name"  required />
+                            </div>
+                            <div class="form-group">
+                                <label>Father's Profession</label>
+                                <input type="text" class="form-control" name="fathersProfession" placeholder="Father's Profession" required />
+                            </div>
+                            <div class="form-group">
+                                <label>Father's Mobile Number</label>
+                                <input type="text" class="form-control" name="fathersMobile" placeholder="Father's Mobile Number" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Mother's Name</label>
+                                <input type="text" class="form-control" name="mothersName" placeholder="Mother's Name"  required/>
+                            </div>
+                            <div class="form-group">
+                                <label>Mother's Profession</label>
+                                <input type="text" class="form-control" name="mothersProfession" placeholder="Mother's Profession" required/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Mother's Mobile Number</label>
+                                <input type="text" class="form-control" name="mothersMobile" placeholder="Mother's Mobile Number" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Mobile Number</label>
+                                <input type="text" class="form-control" name="mobile" placeholder="Student's Mobile Number" required>
+                            </div>
+                             <div class="form-group">
+                                <label>SMS Number</label>
+                                <input type="text" class="form-control" name="smsMobile" placeholder="SMS Number" required>
+                            </div>                       
+                            <div class="form-group">
+                                <label>Monthly Fees</label>
+                                <input type="text" class="form-control" name="fees" placeholder="Monthly Fees" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Registation Fee</label>
+                                <input type="text" class="form-control" name="regFees" placeholder="Registration Fee"  required>
+                            </div>
+                            
+
+                            <div class="form-group">
+                                <label>Parmanent Address</label>
+                                <textarea name="parmanentAddress" class="form-control" placeholder="Parmanent Address" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Present Address</label>
+                                <textarea name="presentAddress" class="form-control" placeholder="Present Address" required></textarea>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Profile Pic</label>
+                                <input type="file" name="profile_pic" class="form-control" >
+                            </div>
+
+                        </div>
+                        <!-- /.card-body -->
+
+                        <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Add Student</button>
+                        </div>
+                    </form>
+                    
+                    
+                    </div>
+                    <!-- /.card -->
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+  {% endblock main_content %}
+
+  {% block custom_js %}
+    {% comment %} Checking if email and username already exists or not usin Ajax {% endcomment %}
+
+    <script>
+        $("#class_id").change(function () {
+        // get the url of the `load_cities` view
+      var class_id = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: "{% url 'load_batch' %}",   
+        type:'POST',
+        data: {
+          'classes': class_id ,     // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+            let x = data.batchJson ; 
+            
+            let output = "" ;
+            for(i=0;i<x.length; i++){
+                output += "<option value='"+x[i].id+"'>"+x[i].batch_name+"</option>";
+            }
+            $("#batch_id").html(output);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+        $(document).ready(function(){
+            // keyup event will be triggered when user leaves keyboard
+            $("#id_email").keyup(function(){
+                var email = $(this).val();
+
+                if(email!=""){
+                    $.ajax({
+                        url : "{% url 'check_email_exist' %}",
+                        type : 'POST',
+                        data : {email:email}
+                    })
+                    .done(function(response){
+                        //console.log(response);
+
+                        if(response == "True"){
+                            $(".email_error").remove();
+                            $("<span class='email_error' style='color: red; padding: 5px; font-weight: bold;'> Email Not Available. </span>").insertAfter("#id_email")
+                        }
+                        else{
+                            $(".email_error").remove();
+                            $("<span class='email_error' style='color: green; padding: 5px; font-weight: bold;'> Email Available. </span>").insertAfter("#id_email")
+                        }
+                    })
+
+                    .fail(function(){
+                        console.log("Failed");
+                    })
+                }
+                else{
+                    $(".email_error").remove();
+                }
+                
+            })
+
+            $("#id_username").keyup(function(){
+                var username = $(this).val();
+                
+                if(username!=""){
+                    $.ajax({
+                        url : "{% url 'check_username_exist' %}",
+                        type : 'POST',
+                        data : {username:username}
+                    })
+                    .done(function(response){
+                        //console.log(response);
+
+                        if(response == "True"){
+                            $(".username_error").remove();
+                            $("<span class='username_error' style='color: red; padding: 5px; font-weight: bold;'> Username Not Available. </span>").insertAfter("#id_username")
+                        }
+                        else{
+                            $(".username_error").remove();
+                            $("<span class='username_error' style='color: green; padding: 5px; font-weight: bold;'> Username Available. </span>").insertAfter("#id_username")
+                        }
+                    })
+
+                    .fail(function(){
+                        console.log("Failed");
+                    })
+                }
+                else{
+                    $(".username_error").remove();
+                }
+                
+            })
+            $("#id_roll").keyup(function(){
+                var roll = $(this).val();
+                var class_id = $("#class_id").val() ;
+                if(roll!=""){
+                    $.ajax({
+                        url : "{% url 'check_roll_exist' %}",
+                        type : 'POST',
+                        data : {roll:roll,class_id:class_id}
+                    })
+                    .done(function(response){
+                        //console.log(response);
+
+                        if(response == "True"){
+                            $(".username_error").remove();
+                            $("<span class='username_error' style='color: red; padding: 5px; font-weight: bold;'> Roll Not Available For This Class. </span>").insertAfter("#id_roll")
+                        }
+                        else{
+                            $(".username_error").remove();
+                            $("<span class='username_error' style='color: green; padding: 5px; font-weight: bold;'> Roll Available. </span>").insertAfter("#id_roll")
+                        }
+                    })
+
+                    .fail(function(){
+                        console.log("Failed");
+                    })
+                }
+                else{
+                    $(".username_error").remove();
+                }
+                
+            })
+        })
+    </script>
+
+  {% endblock custom_js %}

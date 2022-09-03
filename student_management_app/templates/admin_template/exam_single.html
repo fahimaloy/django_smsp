@@ -1,0 +1,70 @@
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Result
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+
+<section class="content">
+        <div class="container-fluid">
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-dark">
+                        <div class="card-header">
+
+
+                            <h3 class="card-title">{{ examName }}</h3>
+                        </div>
+                        
+                       
+                    <div class="card-body TableDate">
+                        <div class="table-responsive">
+
+                             <table id="filteredTable" class="table">
+                                
+                                    <thead><tr><th>#SL</th><td>Student Name</td><td>CoachingID</td><th>Subject</th><th>Total Marks</th><th>Obtained Marks</th><th>status</th><th>Delete</th></tr></thead>
+                                    <tbody>
+                                        {% for i in results %}
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td>{{i.student_id.admin.first_name}} {{i.student_id.admin.last_name}}</td>
+                                                <td>{{i.student_id.admin.username}}</td>
+                                                <td>{{i.subject_id.subject_name}}</td>
+                                                <td>{{i.subject_assignment_marks}}</td>
+                                                <td>{{i.subject_exam_marks}}</td>
+                                                <td>{{i.gpa}}</td>
+                                                <td><a href="{% url 'delete_single_result' i.id %}" class="btn btn-danger">Delete</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                                               
+                             </table>
+                        </div>
+                             
+                     </div>
+
+
+ 
+ 
+ 
+  
+
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /.container-fluid -->
+  </section>
+
+{% endblock main_content %}
+
+{% block custom_js %}
+
+
+{% endblock custom_js %}

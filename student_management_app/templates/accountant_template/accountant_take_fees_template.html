@@ -1,0 +1,260 @@
+{% extends 'accountant_template/base_template.html' %}
+
+{% block page_title %}
+    Add Fees
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Add Fees</h3>
+                    </div>
+                    <!-- /.card-header -->
+
+                                {% comment %} Display Messages {% endcomment %}
+                                {% if messages %}
+                                <div class="form-group">
+                                <div class="col-12">
+                                    {% for message in messages %}
+                                    {% if message.tags == "error" %}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% elif message.tags == "success" %}
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                                </div>
+                                {% endif %}
+                            
+
+                        <div class="card-body">
+                           
+                            <div class="form-group">
+                                <label>Class </label>
+                                <select class="form-control" name="clss" id="clss">
+                                    <option value=""> ------------ </option>
+                                    {% for clss in classes %}
+                                        <option value="{{ clss.id }}">{{ clss.class_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label> Batch </label>
+                                <select class="form-control" name="batch" id="batch">
+                                    <option> ------------ </option>
+                                    
+                                </select>
+                            </div>
+
+
+                        </div>
+                        <!-- /.card-body -->
+
+                        <div class="card-footer">
+                        <button type="button" class="btn btn-primary" id="fetch_student">Fetch Student</button>
+                        </div>
+
+                        {% comment %} Displaying Students Here {% endcomment %}
+
+                        <div class="card-footer" id="student_data">
+                        </div> 
+
+                    </div>
+                    <!-- /.card -->
+                    <!-- /.card-header -->
+                    <div class="card-body table-responsive p-0">
+                        <table class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                            <th>SL.</th>
+                            <th>Fees Title</th>
+                            <th>Name</th>                            
+                            <th>Coaching ID</th>
+                            <th>Class</th>
+                            <th>Batch</th>
+                            <th>Amount</th>
+                            <th>Added On</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for fees in taken_fees %}
+                            <tr>
+                            
+                            <td>{{ forloop.counter }}</td>
+                            
+                            
+                            <td> {{fees.fees_title}} </td>
+                            <td>{{ fees.student_id.admin.first_name }} {{ fees.student_id.admin.last_name }}</td>
+                            <td>{{ fees.student_id.admin.username }}</td>
+                            <td> {{fees.class_id.class_name}} </td>
+                            <td> {{fees.batch_id.batch_name}} </td>
+                            <td> {{fees.amount}} </td>
+                            <td>{{ fees.created_at }}</td>
+                            
+                            
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+  {% endblock main_content %}
+
+{% block custom_js %}
+
+<script>
+    $("#clss").change(function () {
+        // get the url of the `load_cities` view
+      var class_id = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: "{% url 'load_batch' %}",   
+        type:'POST',
+        data: {
+          'classes': class_id ,     // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+            let x = data.batchJson ; 
+            
+            let output = "" ;
+            for(i=0;i<x.length; i++){
+                output += "<option value='"+x[i].id+"'>"+x[i].batch_name+"</option>";
+            }
+            $("#batch").html(output);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+    $(document).ready(function(){
+        $("#fetch_student").click(function(){
+
+            // Displaying Students Based on Staff, class and Session Enrolled
+
+            var clss=$("#clss").val()
+            var batch=$("#batch").val()
+
+            $.ajax({
+                url:"{% url 'accountant_get_students_fees' %}",
+                type:'POST',
+                data:{classes:clss, batch:batch},
+            })
+
+            
+            .done(function(response){
+                var json_data=JSON.parse(response);
+                console.log(json_data)
+                //Displaying Attendance Date Input and Students Attendance
+                // var div_data="<div class='form-group'><label for='date'> Date :</label><input type='month' name='date' class='form-control' id='date'></div> <div class='form-group'><label>Fees Title: </label> <input type='text' name='fees_title' id='fees_title' class='form-control' /><label>Fees Amount: </label> <input type='number' name='amount' id='amount' class='form-control' /></div>"
+                var div_data="<div class='form-group'><label for='date'> Date :</label><input type='month' name='date' class='form-control' id='date'></div> <div class='form-group'><div class='form-group'><label>Fees Title: </label> <input type='text' name='fees_title' id='fees_title' class='form-control'  required/></div><div class='form-group'><label>Additional Fees Title</label><input type='text' name='additional_title' id='additional_title' value='N/A' class='form-control'  required/></div><div class='form-group'><label>Additional Fees Amount: </label> <input type='number' value='0' name='additional_amount' id='additional_amount' class='form-control' required /></div>"
+                div_data+="<div class='form-group'><div class='row'>"
+
+                for(key in json_data)
+                {
+                    div_data+="<div class='col-lg-2'><div class='form-check'><input type='checkbox' checked='checked' name='student_data[]' value='"+ json_data[key]['id'] +"' />  <label class='form-check-label'>"+ json_data[key]['name']+"["+json_data[key]['feesAmount']+" BDT] </label></div></div> ";
+
+                }
+                div_data+="</div></div>";
+                div_data+="<div class='form-group'>";
+                div_data+="<button id='save_fees' class='btn btn-success' type='button'>Save Fees Data</button>";
+                div_data+="</div>";
+                $("#student_data").html(div_data);
+
+            })
+            .fail(function(){
+                alert("Error in Fetching Students.")
+            })
+
+            // Save Attendance Data to Database
+            $(document).on("click", "#save_fees", function(){
+                
+                //Disabling the Button while data is being saved in Server
+                $(this).attr("disabled", "disabled")
+                $(this).text("Saving Fees Data...")
+
+                //console.log("SAVE")
+                var student_data=$("input[name='student_data[]'").map(function(){ 
+                        if($(this).is(":checked")){
+                            return {"id":$(this).val(), "status":1}; // Getting ID and Value of Students
+                        }
+                        else
+                        {
+                            return {"id":$(this).val(), "status":0}; // Getting ID and Value of Students
+                        }
+                    }).get()
+                    var fees_title=$("#fees_title").val();
+                var additional_title=$("#additional_title").val();
+                var fees_date = $("#date").val();
+                var additional_amount=$("#additional_amount").val();
+                var class_id=$("#clss").val();
+                var batch_id=$("#batch").val();
+                //console.log(attendance_date)
+                //console.log(student_data);
+                student_data = JSON.stringify(student_data)
+
+                // Saving Attendance Data into Database
+                if($.trim(fees_title).length > 0){
+                    $.ajax({
+                        url:"{% url 'accountant_save_fees_data' %}",
+                        type:'POST',
+                        data:{students_ids:student_data, fees_title:fees_title,fees_date:fees_date ,additional_title:additional_title, additional_amount:additional_amount, class_id:class_id, batch_id:batch_id},
+                    })
+    
+                    
+                    .done(function(response){
+                        
+                        if(response=="OK")
+                        {
+                            alert("Fees Saved!")
+                        }
+                        else
+                        {
+                            alert("Failed to Save Fees!")
+                        }
+                        location.reload()
+                        
+                        //console.log(response)
+                    })
+    
+                    .fail(function(){
+                        alert("Error in Saving Students Fees Data.")
+                    })
+                }
+                else{
+                alert("Add Fees Title.");
+                window.location.reload();
+            }
+                
+            })
+
+        })
+    })
+</script>
+{% endblock custom_js %}

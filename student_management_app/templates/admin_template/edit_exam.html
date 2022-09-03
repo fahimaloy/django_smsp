@@ -1,0 +1,117 @@
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Add / Publish Exams
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+            {% if messages %}
+            <div class="form-group">
+            <div class="col-12">
+                {% for message in messages %}
+                {% if message.tags == "error" %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                {% elif message.tags == "success" %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Exams</h3>
+                        </div>
+                        <!-- /.card-header -->
+
+                        <form action="{% url 'edit_exam_save' %}" class="" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="exam_id" value="{{exams.id}}">
+                            <div class="form-group m-2">
+                                <label for="class_id">Class : </label>
+                                <select name="class_id" id="class_id" class="form-control">
+                                    <option>----------</option>
+                                    {% for clss in classes %}
+                                        <option class="" value="{{clss.id}}"> {{clss.class_name}} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group m-2">
+                                <label for="batch_id">Batch : </label>
+                                <select name="batch_id" id="batch_id" class="form-control">
+
+                                </select>
+                            </div>
+                            <div class="form-group m-2">
+                                <label for="title">Examination Name</label>
+                                <input type="text" class="form-control" name="title" value="{{exams.exam_name}} " id="title" placeholder="Exam Name">
+                            </div>
+                            <div class="form-group m-2">
+                                <label for="date">Examination Date</label>
+                                <input class="form-control" type="date" value="{{exams.exam_date}}" name="date" id="date">
+                            </div>
+                            <button type="submit" class="btn btn-primary m-2">Edit Exam</button>
+                        </form>
+
+
+                    
+                    </div>
+                    <!-- /.card -->
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+      
+
+  {% endblock main_content %}
+
+  {% comment %} Custom JS to Identify the Reply and Post Reply {% endcomment %}
+
+{% block custom_js %}
+  <script>
+      
+  $("#class_id").change(function () {
+        // get the url of the `load_cities` view
+      var class_id = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: "{% url 'load_batch' %}",   
+        type:'POST',
+        data: {
+          'classes': class_id ,     // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+            let x = data.batchJson ; 
+            
+            let output = "" ;
+            for(i=0;i<x.length; i++){
+                output += "<option value='"+x[i].id+"'>"+x[i].batch_name+"</option>";
+            }
+            $("#batch_id").html(output);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+  </script>
+  {% endblock custom_js %}

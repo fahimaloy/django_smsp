@@ -1,0 +1,268 @@
+{% extends 'teacher_template/base_template.html' %}
+
+{% block page_title %}
+    Add Result
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <form method="POST" action="{% url 'teacher_add_result_save' %}">
+                    {% csrf_token %}
+                    <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Add Result</h3>
+                    </div>
+                    <!-- /.card-header -->
+
+                                {% comment %} Display Messages {% endcomment %}
+                                {% if messages %}
+                                <div class="form-group">
+                                <div class="col-12">
+                                    {% for message in messages %}
+                                    {% if message.tags == "error" %}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% elif message.tags == "success" %}
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                                </div>
+                                {% endif %}
+                            
+          
+
+                        <div class="card-body">
+                           
+                            <div class="form-group">
+                                <input type="search" class="form-control" name="searchID" placeholder="Student Coaching ID" id="searchID">
+                                <button type="button" class="btn btn-primary my-2" id="searchButton">Fetch Details</button>
+                                <a href="{% url 'teacher_feedback' %}" class="btn btn-danger">Notify Administrations Of Result Submission</a>
+                            </div>
+
+                           
+
+
+                            
+                            
+                        </div>
+                        
+                        
+                        <!-- /.card-body -->
+                        
+                        <div class="card-footer">
+                            
+                            
+                            {% comment %} Displaying Students Here {% endcomment %}
+                            
+                            
+                            <div class="exam_area">
+                                    <div id="SubjectName">
+                                        
+                                    </div>
+                                
+                                </div>
+                                <div class="form-group">
+                                    <label>Exam Name</label>
+                                    <select class="form-control" name="exam" id="exam" required>
+                                        
+                                    </select>
+                                </div>
+                                
+                            <!-- <button type="button" id="fetchStudent" class="btn btn-primary" id="fetchStudent">Fetch Exams</button> -->
+                            </div>
+                        
+                        <div class="card-body">
+                            <div class='form-group' id="STUDENT">
+                                <label>Student Name</label>
+                                <div id="studentName">
+                                    
+                                </div>
+                            </div>
+                            
+                            <div  class="exam_area" id="student_data">
+                            <div class='form-group p-2'>
+                                <div class='row'>
+
+                                <div class='col-lg-6'>
+
+                                    <label>Total Marks : </label>
+                                    <input type='text'name='assignment_marks' class='form-control' placeholder='Total Marks'  required/>
+
+                                </div>
+                                <div class='col-lg-6'>
+                                    <label>Obtained Marks : </label>
+                                    <input type='number'name='exam_marks' class='form-control' placeholder='Obtained Marks'  required/>
+                                </div>
+
+                            </div>
+                            <div class='form-group'>
+                                <button id='save_attendance' class='btn btn-success my-2' type='submit'>Save Result</button>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                    </form>
+                    <!-- /.card -->
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>#SL</th>
+                                        <th>Coaching ID</th>
+                                        <th>Name</th>
+                                        <th>Class</th>
+                                        <th>Batch</th>
+                                        <th>Exam</th>
+                                        <th>Subject</th>
+                                        <th>Marks</th>
+                                        <th>GPA</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in result %}
+                                        <tr>
+                                            <td>{{forloop.counter}}</td>
+                                            <td>{{i.student_id.admin.username}}</td>
+                                            <td>{{i.student_id.admin.first_name}} {{i.student_id.admin.last_name}}</td>
+                                            <td>{{i.student_id.class_id.class_name}}</td>
+                                            <td>{{i.student_id.batch_id.batch_name}}</td>
+                                            <td>{{i.exam_id.exam_name}}</td>
+                                            <td>{{i.subject_id.subject_name}}</td>
+                                            <td>{{i.subject_exam_marks}} / {{i.subject_assignment_marks}}</td>
+                                            <td>{{i.gpa}}</td>
+
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+  {% endblock main_content %}
+
+{% block custom_js %}
+
+<script>
+    
+    $(document).ready(function(){
+        
+        $(".exam_area").hide()
+        $("#STUDENT").hide()
+        $("#searchButton").click(function(){
+
+            // Displaying Students Based on teacher, Course and Session Enrolled
+
+            
+            var coachingID=$("#searchID").val()
+            let output = "";
+            let mroutput = "<div class='form-group col-lg-12'><label>Subject </label><select class='form-control' id='subject' name='subject'>";
+
+            $.ajax({
+                url:"{% url 'get_exam_students' %}",
+                type:'POST',
+                data:{coachingID:coachingID},
+                dataType: "json",
+
+                success: function(data){
+                    $("#STUDENT").show()
+                    if(data.status == "save"){
+                                let x = data.details;
+                                let y = data.subjects ; 
+                                for(i=0;i<y.length; i++){
+                                    mroutput += "<option value='"+y[i].id+"'>"+y[i].subject_name+"</option>"   
+                                }
+                                    mroutput += "</select></div>";
+                                    output += "<input disabled class='form-control' name='name' value='"+x[0].name+"'/>";
+                                    output += "<input type='hidden' name='student_id' id='student_id' value='"+x[0].id+"'>"
+                                
+                                $("#studentName").html(output);
+                                
+                                $("#SubjectName").html(mroutput);
+
+                                console.log(x[0].name);
+                                
+                    
+                                
+                            }
+
+                    else{
+                           alert("something is wrong");
+                        }
+            var student_id=$("#student_id").val();
+            let output2="";
+
+            
+            $.ajax({
+                    url:"{% url 'get_exams' %}",
+                    type:'POST',
+                    data:{student_id:student_id},
+                    dataType: "json",
+
+                    success: function(data){
+                        $(".exam_area").show()
+                        
+                        
+                        if(data.status == "save"){
+                            let x = data.exam_data;
+                            for(i=0;i<x.length; i++){
+                                output2 += "<option value='"+x[i].id+"'>"+x[i].exam_name + " " +x[i].exam_date+"</option>";
+                            }
+                            $("#exam").html(output2);
+
+                            console.log(data.exam_data);
+                            
+                        }
+
+                        else{
+                           alert("something is wrong");
+                        }
+                    },
+            });
+
+                },
+            });
+
+        });
+    });
+            
+           
+                // $("#student_data").html(div_data);
+
+//             })
+//             .fail(function(){
+//                 alert("Error in Fetching Students.")
+//             })
+//         });
+// });
+    
+</script>
+{% endblock custom_js %}

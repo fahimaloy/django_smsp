@@ -1,0 +1,181 @@
+{% extends 'admin_template/base_template.html' %}
+
+{% block page_title %}
+    Teacher's Payment
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                       
+                        <!-- /.card-header -->
+
+                        
+                        <div class="card-header"style="display: flex;justify-content: center;">
+                            
+                             
+                            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="true" aria-controls="collapseExample">
+                                <b>Class & Payment History</b>
+                              </button>
+                            <!-- <h3 class="card-title">Total Payment{{al}}</h3>
+                            <h3 class="card-title">Payment Paid {{tplv}}</h3>
+                            <h3 class="card-title">Due Payment {{due_payment}}</h3> -->
+                        </div>
+
+
+                        <div class="collapse show" id="collapseExample">
+                            <div class="card-header bg-warning"style="display: flex;justify-content: space-around;">
+                            
+                           
+                                <h3 class="card-title">Total Payment{{al}}</h3>
+                                <h3 class="card-title">Payment Paid {{total_payment_list_value}}</h3>
+                                <h3 class="card-title">Due Payment {{due_payment}}</h3>
+                            </div>
+                            <div class="card-body">
+                            <div class="table-responsive">
+                                 <table class="table">
+                                     <thead class="thead-light">
+                                     <tr>
+                                         <th>#ID</th>
+                                        <th>Paying Date</th>
+                                         <th>Pay Upto</th>
+                                         <th>Amount</th>
+                                         
+                                     </tr>
+                                     </thead>
+                                     
+                                     {% for payment in payment_details %}
+                                     <tr>
+                                         <td>{{ payment.id }}</td>
+                                         <td>{{payment.paying_date}}</td>
+                                         <td>{{payment.payment_upto}}</td>
+                                         <td>{{ payment.payment_amount }} <b>৳</b> </td>
+                                     </tr>
+                                     {% endfor %}
+
+                                   
+                                        
+<!--                                     
+                                     <tr>
+                                         <td colspan="3" align="center" ><b>Total :</b></td>
+                                         <td colspan="2"><b>{{tplv}} ৳</b></td>
+                                     </tr> -->
+             
+                                 </table>
+                             </div>
+                         </div>
+
+                        </div>
+
+              
+                    </div>
+                    <!-- /.card -->
+
+
+
+
+                </div>
+            </div>
+
+            
+            <form method="POST" action="{% url 'add_teachers_payment' si %}">
+                {% csrf_token %}
+                <input type="date" name="pay_upto" >
+                <input type="text" name="payment_amount" >
+                <button type="submit" class="btn btn-primary"> Submit </button>
+            </form>
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                       
+                        <!-- /.card-header -->
+
+                        
+                        <div class="card-header"style="display: flex;justify-content: center;">
+                            
+                             
+                            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseClass" aria-expanded="true" aria-controls="collapseExample">
+                                <b>Class History</b>
+                              </button>
+                          
+                        </div>
+
+
+                        <div class="collapse show" id="collapseClass">
+                        
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                     <table class="table">
+                                         <thead class="thead-light">
+                                         <tr>
+                                             <th>#ID</th>
+                                             <th>Class Name</th>
+                                             <th>Subject Name</th>
+                                             <th>Class Date</th>
+                                             <th>From</th>
+                                             <th>To</th>
+                                             <th>Payment</th>
+                                             
+                                         </tr>
+                                         </thead>
+                                         
+                                         {% for ap_class in approved_class %}
+                                         <tr>
+                                             
+
+                                            <td>{{ ap_class.id }}</td>
+                                             <td>{{ap_class.pcc_id.class_id.class_name}}</td>
+                                             <td>{{ap_class.pcc_id.subject_id.subject_name}}</td>
+                                             <td>{{ ap_class.class_date }}</td>
+                                             <td>{{ ap_class.from_time }}</td>
+                                             <td>{{ ap_class.to_time }}</td>
+                                             <td>{{ ap_class.per_class_charge }} <b>৳</b> </td>
+                                            
+                                             
+                                      
+                                         </tr>
+     
+                                         {% endfor %}
+     
+                                         <tr>
+                                             <td colspan="6" align="center" ><b>Total :</b></td>
+                                             <td colspan="1"><b>{{al}} ৳</b></td>
+                                         </tr>
+                 
+                                     </table>
+                                 </div>
+                             </div>
+
+                        </div>
+
+              
+                    </div>
+                    <!-- /.card -->
+
+
+                    
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+
+
+  {% endblock main_content %}
+
+  {% comment %} Custom JS to Identify the Reply and Post Reply {% endcomment %}
+
+  {% block custom_js %}
+
+  {% endblock custom_js %}
