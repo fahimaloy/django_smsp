@@ -183,7 +183,7 @@ def add_teacher_save(request):
             'Content-Type': 'application/x-www-form-urlencoded'
             }
 
-            response = requests.request("POST", url, headers=headers, data = payload)
+            #response = requests.request("POST", url, headers=headers, data = payload)
 
             
             messages.success(request, "teacher Added Successfully!")
@@ -276,7 +276,7 @@ def edit_teacher_save(request):
                 'Content-Type': 'application/x-www-form-urlencoded'
                 }
 
-                response = requests.request("POST", url, headers=headers, data = payload)
+                #response = requests.request("POST", url, headers=headers, data = payload)
 
             user.save()
             
@@ -582,7 +582,7 @@ def add_student_save(request):
             'Content-Type': 'application/x-www-form-urlencoded'
             }
     
-            response = requests.request("POST", url, headers=headers, data = payload)
+            #response = requests.request("POST", url, headers=headers, data = payload)
     
             messages.success(request, "Student Added Successfully!")
             return redirect('add_student')
@@ -711,7 +711,7 @@ def edit_student_save(request):
                 headers = {
                 'Content-Type': 'application/x-www-form-urlencoded'
                 }
-                response = requests.request("POST", url, headers=headers, data = payload)
+                #response = requests.request("POST", url, headers=headers, data = payload)
 
     
                 
@@ -977,7 +977,7 @@ def student_payment_approve(request, payment_id):
     'Content-Type': 'application/x-www-form-urlencoded'
     }
 
-    response = requests.request("POST", url, headers=headers, data = payload)
+    #response = requests.request("POST", url, headers=headers, data = payload)
 
     # print(response.text.encode('utf8'))
     # print(url)
@@ -1078,9 +1078,9 @@ def add_teachers_payment(request):
             'Content-Type': 'application/x-www-form-urlencoded'
             }
 
-            response = requests.request("POST", url, headers=headers, data = payload)
+            #response = requests.request("POST", url, headers=headers, data = payload)
 
-            print(response.text.encode('utf8'))
+            #print(response.text.encode('utf8'))
             print(url)
             leave_report.save()
             return HttpResponse("True")
@@ -1369,7 +1369,7 @@ def save_fees_data(request):
                 # 'Content-Type': 'application/x-www-form-urlencoded'
                 # }
 
-                # response = requests.request("POST", url, headers=headers, data = payload)
+                # #response = requests.request("POST", url, headers=headers, data = payload)
 
                 # print(response.text.encode('utf8'))
                 # print(url)
@@ -2116,7 +2116,7 @@ def save_notice(request):
             'Content-Type': 'application/x-www-form-urlencoded'
             }
 
-            response = requests.request("POST", url, headers=headers, data = payload)
+            #response = requests.request("POST", url, headers=headers, data = payload)
 
            
         notice = Notices(class_id=clss,batch_id=batch,title=title,description=description)        
@@ -2389,9 +2389,9 @@ def publish_result(request,exam_id):
         'Content-Type': 'application/x-www-form-urlencoded'
         }
 
-        response = requests.request("POST", url, headers=headers, data = payload)
+        #response = requests.request("POST", url, headers=headers, data = payload)
 
-        print(response.text.encode('utf8'))
+        #print(response.text.encode('utf8'))
         print(url)
         
     for i in tm:
@@ -2412,7 +2412,7 @@ def publish_result(request,exam_id):
     # 'Content-Type': 'application/x-www-form-urlencoded'
     # }
 
-    # response = requests.request("POST", url, headers=headers, data = payload)
+    # #response = requests.request("POST", url, headers=headers, data = payload)
 
     # print(response.text.encode('utf8'))
     # print(url)
@@ -2552,7 +2552,7 @@ def edit_accountant_save(request):
                 'Content-Type': 'application/x-www-form-urlencoded'
                 }
     
-                response = requests.request("POST", url, headers=headers, data = payload)
+                #response = requests.request("POST", url, headers=headers, data = payload)
 
             user.save()
             
@@ -2735,9 +2735,9 @@ def ask_for_payment(request,student_id,due):
     'Content-Type': 'application/x-www-form-urlencoded'
     }
 
-    response = requests.request("POST", url, headers=headers, data = payload)
+    #response = requests.request("POST", url, headers=headers, data = payload)
 
-    print(response.text.encode('utf8'))
+    #print(response.text.encode('utf8'))
     print(url)
     messages.success(request, "Message Sent Successfully!")
     return redirect('student_payment_batch_filter')    
@@ -3158,7 +3158,7 @@ def sms_save(request):
         'Content-Type': 'application/x-www-form-urlencoded'
         }
 
-        response = requests.request("POST", url, headers=headers, data = payload)
+        #response = requests.request("POST", url, headers=headers, data = payload)
 
         messages.success(request,"Successfully SMS Sent")
         return redirect('sms')

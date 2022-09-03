@@ -285,9 +285,9 @@ def save_attendance_data(request):
             'Content-Type': 'application/x-www-form-urlencoded'
             }
 
-            response = requests.request("POST", url, headers=headers, data = payload)
+            #response = requests.request("POST", url, headers=headers, data = payload)
 
-            print(response.text.encode('utf8'))
+            #print(response.text.encode('utf8'))
             print(url)
             
             attendance_report.save()
@@ -422,7 +422,7 @@ def teacher_profile_update(request):
                 'Content-Type': 'application/x-www-form-urlencoded'
                 }
     
-                response = requests.request("POST", url, headers=headers, data = payload)
+                #response = requests.request("POST", url, headers=headers, data = payload)
 
                 
             customuser.save()

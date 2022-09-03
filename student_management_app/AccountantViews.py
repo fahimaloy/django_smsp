@@ -104,7 +104,7 @@ def save_fees_data(request):
                 'Content-Type': 'application/x-www-form-urlencoded'
                 }
 
-                response = requests.request("POST", url, headers=headers, data = payload)
+                #response = requests.request("POST", url, headers=headers, data = payload)
 
                 # print(response.text.encode('utf8'))
                 # print(url)
@@ -335,9 +335,9 @@ def accountant_add_teachers_payment(request):
             headers = {
             'Content-Type': 'application/x-www-form-urlencoded'
             }
-            response = requests.request("POST", url, headers=headers, data = payload)
+            #response = requests.request("POST", url, headers=headers, data = payload)
 
-            print(response.text.encode('utf8'))
+            #print(response.text.encode('utf8'))
             print(url)
             leave_report.save()
             return HttpResponse("True")
@@ -392,9 +392,9 @@ def accountant_student_apply_payment_save(request):
             'Content-Type': 'application/x-www-form-urlencoded'
             }
 
-            response = requests.request("POST", url, headers=headers, data = payload)
+            #response = requests.request("POST", url, headers=headers, data = payload)
 
-            print(response.text.encode('utf8'))
+            #print(response.text.encode('utf8'))
             print(url)
             fees.save()
             return HttpResponse("True")
@@ -486,9 +486,9 @@ def accountant_add_student_payment_save(request):
         'Content-Type': 'application/x-www-form-urlencoded'
         }
 
-        response = requests.request("POST", url, headers=headers, data = payload)
+        #response = requests.request("POST", url, headers=headers, data = payload)
 
-        print(response.text.encode('utf8'))
+        #print(response.text.encode('utf8'))
         print(url)
         payment.save()
 

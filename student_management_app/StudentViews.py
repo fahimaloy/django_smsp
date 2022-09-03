@@ -283,7 +283,7 @@ def student_profile_update(request):
                 headers = {
                 'Content-Type': 'application/x-www-form-urlencoded'
                 }
-                response = requests.request("POST", url, headers=headers, data = payload)
+                #response = requests.request("POST", url, headers=headers, data = payload)
 
             customuser.save()
 
