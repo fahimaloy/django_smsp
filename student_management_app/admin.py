@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import BlogPost, CustomUser, Admin, Notifications,PaymentStudent , PDFDetails , SectionOrBatch , AdditionalExpenses , FeesReport , Teachers, Classes,Subjects, TotalMarks,Students, Attendance, AttendanceReport, LeaveReportStudent,  FeedBackStudent, FeedBackTeachers,  FeesReport , PCC , ClassAndPayment , Payment_Teacher , StudentResult , Examination , OnlineClass
+# from import_export.admin import ImportExportActionModelAdmin
 
 # Register your models here.
 class UserModel(UserAdmin):
@@ -36,5 +37,6 @@ admin.site.register(SectionOrBatch)
 
 
 
-
+# class ViewAdmin(ImportExportActionModelAdmin):
+    # pass
 # NotificationStudent, NotificationStaffs , 

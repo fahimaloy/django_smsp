@@ -17,6 +17,7 @@ from django.core import serializers
 import json
 from datetime import datetime
 from student_management_app.models import Accountants, Notifications, PDFDetails ,CustomUser,AdditionalExpenses , CustomSMS , OnlineClass , Notices, PDFDetails , Teachers, TotalMarks , Examination , StudentResult , Classes, Subjects, Students, SectionOrBatch, FeedBackStudent, FeedBackTeachers, LeaveReportStudent,  ClassAndPayment, Attendance, AttendanceReport, PaymentStudent ,Payment_Teacher , FeesReport ,PCC
+from student_management_app.serializers import OnlineClassSerializer
 
 
 
@@ -1753,7 +1754,7 @@ def manage_student_single(request , student_id):
     return render(request, 'admin_template/manage_student_single.html', context)
 
 
-    return render(request,"student_template/online_class.html",context)
+    # return render(request,"student_template/online_class.html",context)
 
 def view_result(request):
     classes = Classes.objects.all()
@@ -1918,7 +1919,11 @@ def expenses(request):
     
     
     totalAE = additionalExpenses.aggregate(Sum('amount'))
-    totalAElist = list(totalAE.values())[0]
+    totalAElist1 = list(totalAE.values())[0]
+    try:
+        totalAElist = int(totalAElist1)
+    except:
+        totalAElist = 0
     
     try:
         totalexpenses = int(totalpaidlist) + int(totalAElist)
@@ -3124,12 +3129,12 @@ def load_fees(request):
         return JsonResponse({"status":"OK","feesList":feesList})
         
 def admin_view_online_class(request):
+    return render(request,"admin_template/online_class.html")
+def get_admin_view_online_class(request):
     classes = OnlineClass.objects.all()
-    
-    context = {
-            "classes" : classes ,    
-    }
-    return render(request,"admin_template/online_class.html",context)
+    online_class = OnlineClassSerializer(classes,many=True).data
+    return JsonResponse({"status":"OK","data":online_class})
+
 def sms(request):
     sms = CustomSMS.objects.all().order_by("-sent_at")
     

@@ -1,97 +1,79 @@
-{% extends 'admin_template/base_template.html' %}
-
-{% block page_title %}
-    Online Class
-{% endblock page_title %}
-
-{% block main_content %}
-
-{% load static %}
+{% extends 'admin_template/base_template.html' %} {% load static %} {% block custom_css %}
+<!-- <script src="https://unpkg.com/vue@3"></script>   -->
+<!-- <script src="https://unpkg.com/vue-router@4"></script> -->
+<script src="{% static 'customJS/vueGlobal.js' %}"></script>
+<script src="{% static 'customJS/vueRouter.js' %}"></script>
+{% endblock custom_css %} {% block main_content %}
 
 <section class="content">
-        <div class="container-fluid">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- general form elements -->
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Online Class</h3>
+          </div>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <!-- general form elements -->
-                    <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">Online Class</h3>
-                    </div>
-                    <!-- /.card-header -->
-
-
-                            
-                    <!-- <form method="POST" action="{% url 'student_apply_payment_save' %}"> -->
-                                    
-            
-                                    <div class="card-body">
-                                       <div class="table-responsive">
-                                            <table class="table">
-                                                <thead class="thead-light">
-                                                <tr>
-                                                    <th>#SL</th>
-                                                    <th>Teacher</th>
-                                                    <th>Class Title</th>
-                                                    <th>Class Link</th>
-                                                    <th>Class</th>
-                                                    <th>Batch</th>
-                                                    <th>Action</th>
-                                                    
-                                                    
-                                                </tr>
-                                                </thead>
-                                                
-                                                
-                                    {% for row in classes %}
-                                    <tr>
-                                        <td>{{ forloop.counter }}</td>
-                                        <td>{{ row.teacher_id.first_name }} {{ row.teacher_id.last_name }}</td>
-                                        <td>{{ row.online_class_name }}</td>
-                                        <td>{{ row.online_class_link }}</td>
-                                        <td>{{ row.class_id.class_name }}</td>
-                                        <td>{{ row.batch_id.batch_name }}</td>
-                                        <td>
-                                            {% if row.status == False %}
-                                            <a href="" class='btn btn-dark' disabled=disabled><i class="fas fa-stop"></i> Class is off now</a>
-                                            
-                                            {% elif row.status == True %}
-                                            <a href="{{ row.online_class_link }}" class='btn btn-success'> Ongoing....Click to Join </a>
-                                            
-                                            
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <!-- /.card-body -->
-            
-                                
-
-                            
-
-                        </div>
-                        <!-- /.card-body -->
-
-
-
-                    </div>
-                    <!-- /.card -->
-
-
-
-                </div>
+          <div class="card-body" id="app">
+            <div class="table-responsive">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead class="thead dark">
+                    <th v-for="thead in theads">
+                      [[thead]]
+                    </th>
+                  </thead>
+                  <tbody>
+                    <tr v-for="online_class in online_classes" key="online_class.id">
+                      <td>[[online_class.id]]</td>
+                      <td>[[online_class.online_class_name]]</td>
+                      <td>[[online_class.batch_id.class_id.class_name]]( [[online_class.batch_id.batch_name]] )</td>
+                      <td>[[online_class.online_class_link]]</td>
+                      <td>
+                        <button class='btn btn-warning' v-if="online_class.status">Ongoing</button>
+                        <button v-else class="btn btn-danger">Offline</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
 
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+    <!-- /.container-fluid -->
+</section>
 
-
-        </div><!-- /.container-fluid -->
-      </section>
-
-  {% endblock main_content %}
-
+{% endblock main_content %}
 {% block custom_js %}
 
+<script>
+
+  const app = Vue.createApp({
+    delimiters: ["[[", "]]"],
+    data() {
+      return {
+        online_classes: [],
+        theads: ['SN', 'Name', 'Class(Batch)', 'Link','Status']
+      };
+    },
+    mounted() {
+      let self = this;
+      $.ajax({
+        url: "{% url 'get_admin_view_online_class' %}",
+        type: "GET",
+        data: {},
+        success: function (data) {
+          self.online_classes = data.data;
+          console.log(self.online_classes)
+        },
+      });
+    },
+  });
+  app.mount("#app");
+</script>
 {% endblock custom_js %}

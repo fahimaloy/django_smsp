@@ -57,7 +57,7 @@ urlpatterns = [
     path('manage_accountant_single/<accountant_id>/', AdminViews.manage_accountant_single, name="manage_accountant_single"),
     path('delete_student_payment_single/<payment_id>/', AdminViews.delete_student_payment_single, name="delete_student_payment_single"),
     
-    
+    path('get_admin_view_online_class/', AdminViews.get_admin_view_online_class, name="get_admin_view_online_class"),
     path('add_class/', AdminViews.add_class, name="add_class"),
     path('manage_attendance/', AdminViews.manage_attendance, name="manage_attendance"),
     path('delete_attendance/<attendance_id>/', AdminViews.delete_attendance, name="delete_attendance"),
