@@ -1,5 +1,6 @@
 import io
 import re
+from tokenize import Number
 from django.contrib.messages.api import error
 from xhtml2pdf import pisa
 from django.template.loader import get_template
@@ -17,7 +18,7 @@ from django.core import serializers
 import json
 from datetime import datetime
 from student_management_app.models import Accountants, Notifications, PDFDetails ,CustomUser,AdditionalExpenses , CustomSMS , OnlineClass , Notices, PDFDetails , Teachers, TotalMarks , Examination , StudentResult , Classes, Subjects, Students, SectionOrBatch, FeedBackStudent, FeedBackTeachers, LeaveReportStudent,  ClassAndPayment, Attendance, AttendanceReport, PaymentStudent ,Payment_Teacher , FeesReport ,PCC
-from student_management_app.serializers import OnlineClassSerializer
+from student_management_app.serializers import NotificationSerializer, OnlineClassSerializer
 
 
 
@@ -3196,35 +3197,35 @@ def notiofications(request):
         "notifications":notifications
     }
     return render(request,"admin_template/notifications.html",context)
+@csrf_exempt 
 def get_not_number(request):
     notnmb = Notifications.objects.filter(status=False).count()
-    notiofications = Notifications.objects.all().order_by("-created_at")[:5]
+    notiofications = Notifications.objects.all().order_by("-created_at")
     list_data = []
     list_data.append({"notf":notnmb})
     l1 = notiofications.values()
     list2 = list(l1)      
 
     return JsonResponse({"notnmb":list_data,"notifications":list2})
-
-    
-    
-    
-
-def seen_notifications(request):
+@csrf_exempt     
+def seen_all_notifications(request):
     notiofications = Notifications.objects.all().order_by("-created_at")
     for i in notiofications:
         i.status = True
         i.save()
-    notf = Notifications.objects.all().order_by("-created_at")[:5]
-    l1 = notf.values()
-    list2 = list(l1)      
-    notnmb = Notifications.objects.filter(status=False).count()
-    list_data = []
-    list_data.append({"notf":notnmb})
-
-    return JsonResponse({"notnmb":list_data,"notifications":list2})
+    return JsonResponse({"status":"All Seen"})
 
     
-    
-    
+@csrf_exempt 
+def seen_notification(request,id):
+    if request.method != "POST":
+        messages.error(request,"Invalid Method!")
+    else:
+        # try:
+        notification = Notifications.objects.get(id=id)
+        notification.status = True
+        notification.save()
+        return JsonResponse({"status":"seen"})
+        # except:
+        #     return JsonResponse({"status":"error"})
     

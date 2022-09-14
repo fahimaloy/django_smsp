@@ -56,7 +56,8 @@ urlpatterns = [
     path('delete_accountant/<accountant_id>/', AdminViews.delete_accountant, name="delete_accountant"),
     path('manage_accountant_single/<accountant_id>/', AdminViews.manage_accountant_single, name="manage_accountant_single"),
     path('delete_student_payment_single/<payment_id>/', AdminViews.delete_student_payment_single, name="delete_student_payment_single"),
-    
+    path('seen_notification/<id>/', AdminViews.seen_notification , name="seen_notification"),  # type: ignore
+    path('seen_all_notifications/', AdminViews.seen_all_notifications , name="seen_all_notifications"),  # type: ignore
     path('get_admin_view_online_class/', AdminViews.get_admin_view_online_class, name="get_admin_view_online_class"),
     path('add_class/', AdminViews.add_class, name="add_class"),
     path('manage_attendance/', AdminViews.manage_attendance, name="manage_attendance"),
@@ -132,7 +133,6 @@ urlpatterns = [
     path('sms_save/', AdminViews.sms_save, name="sms_save"),
     path('get_not_number/', AdminViews.get_not_number, name="get_not_number"),
     path('notiofications/', AdminViews.notiofications, name="notiofications"),
-    path('seen_notifications/', AdminViews.seen_notifications, name="seen_notifications"),
     
     
 

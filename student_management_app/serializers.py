@@ -27,3 +27,7 @@ class OnlineClassSerializer(serializers.ModelSerializer):
     class Meta:
         model = OnlineClass
         fields = ['id','online_class_name','online_class_link','batch_id','status']
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notifications
+        fields = "__all__"
