@@ -51,111 +51,135 @@
                             
 
                         <div class="card-body">
-                            <div class="form-group">
+                        <div class="row">
+
+                            <div class="form-group col-lg-4">
                                 <label>Email address</label>
                                 <input type="email" class="form-control" name="email" value="{{ teacher.admin.email }}">
                             </div>
-
-                            <div class="form-group">
+                            
+                            <div class="form-group col-lg-4">
                                 <label>Username</label>
                                 <input type="text" class="form-control" name="username" value="{{ teacher.admin.username }}">
                             </div>
-
-                            <div class="form-group">
+                            
+                            <div class="form-group col-lg-4">
                                 <label>Password</label>
                                 <input type="password" class="form-control" name="password" />
                             </div>
-
-                            <div class="form-group">
+                            
+                            <div class="form-group col-lg-4">
                                 <label>First Name</label>
                                 <input type="text" class="form-control" name="first_name" value="{{ teacher.admin.first_name }}">
                             </div>
-
-                            <div class="form-group">
+                            
+                            <div class="form-group col-lg-4">
                                 <label>Last Name</label>
                                 <input type="text" class="form-control" name="last_name" value="{{ teacher.admin.last_name }}">
                                 <input type="hidden" name="teacher_id" value="{{ teacher.admin.id }}" />
                             </div>
-
                             
-                            <div class="form-group">
+                            <div class="form-group col-lg-4">
+                                <label>Date Of Birth</label>
+                                <input type="date" class="form-control" value="{{birthDate}}" name="dateOfBirth" placeholder="Date of Birth">
+                            </div>
+                            
+                        </div>
+                        <div class="row">
+
+                            <div class="form-group col-lg-3">
                                 <label>Gender</label>
                                 <select name="gender" id="gender" value="{{teacher.gender}}" class="form-control">
                                     <option value="0" > Male </option>
                                     <option value="1" > Female </option>
                                 </select>
                             </div>
-
-                            <div class="form-group">
-                                <label>Current Educational Institute<sub class="text-muted">If not available for you, type "None"</sub></label>
-                                <input type="text" class="form-control" value="{{teacher.currentInstitute}}" name="currentInstitute" placeholder="Current Educational Institute">
+                            <div class="form-group col-lg-3 ">
+                                <label>Payment Type
+                                    <i class="fas fa-caret-down"></i>
+                                </label>
+                                <select name="payment_type" id="payment_type" class="form-control" value={% if teacher.monthly_payment_type == True %} "1" {% else %} "0" {% endif %}>
+                                    <option value="0"> Class Based </option>
+                                    <option value="1"> Monthly </option>
+                                </select>
                             </div>
-
-                            <div class="form-group">
+                            <div class="form-group col-lg-3" id="monthly_payment"></div>
+                            <div class="form-group col-lg-3 ">
+                                <label>Marital Status
+                                    <i class="fas fa-caret-down"></i>
+                                </label>
+                                
+                                <select name="mstatus" class="form-control" value="{{teacher.mstatus}}">
+                                    <option value="Unmarried"> Unmarried </option>
+                                    <option value="Married"> Married </option>
+                                </select>
+                            </div>
+                            <div class="form-group col-lg-3">
+                                <label>Current Educational Institute</label>
+                                <input type="text" class="form-control" value="{{teacher.currentInstitute}}" name="currentInstitute" placeholder="Current Educational Institute">
+                                <span class='text-muted' style=' padding: 5px; font-weight: bold;'>*If N/A for you, type
+                                    "None"</span>
+                            </div>
+                            
+                            <div class="form-group col-lg-3">
                                 <label>Mobile Number</label>
                                 <input type="text" class="form-control" value="{{teacher.mobileNumber}}" name="mobileNumber" placeholder="Mobile Number">
                             </div>
-
-
-                            <div class="form-group">
+                            
+                            
+                            <div class="form-group col-lg-3">
                                 <label>Emergency Mobile Number</label>
                                 <input type="text" class="form-control" value="{{teacher.emergencyMobileNumber}}" name="emergencyMobileNumber" placeholder="Emergency Mobile Number">
                             </div>
                             
                             
-                            <div class="form-group">
+                            <div class="form-group col-lg-3">
                                 <label>NID Number</label>
                                 <input type="text" class="form-control" value="{{teacher.nid}}" name="nid" placeholder="NID Number">
                             </div>
-                            
-                            <div class="form-group">
-                                <label>Marital Status</label>
-                                <input type="text" class="form-control" value="{{teacher.mstatus}}" name="mstatus" placeholder="Marital Status">
-                            </div>
-            
-                            
-                            <div class="form-group">
-                                <label>Date Of Birth</label>
-                                <input type="date" class="form-control" value="{{birthDate}}" name="dateOfBirth" placeholder="Date of Birth">
-                            </div>
+                        </div>
+                           <div class="row">
 
-
-                            <div class="form-group">
-                                <label>SSC Result</label>
-                                <input type="text" class="form-control" value="{{teacher.sscGroup}}" name="sscGroup" placeholder="SSC Group">
-                                <input type="text" class="form-control" name="sscBoard" value="{{teacher.sscBoard}}" placeholder="SSC Board">
-                                <input type="number" class="form-control" name="sscPassingYear" value="{{teacher.sscPassingYear}}" placeholder="Passing Year">
-                                <input type="number" step="0.01" class="form-control" name="sscGPA" value="{{teacher.sscGPA}}" placeholder="SSC GPA">
-
-                            </div>
-                            <div class="form-group">
+                               <div class="form-group col-lg-4">
+                                   <label>SSC Result</label>
+                                   <input type="text" class="form-control" value="{{teacher.sscGroup}}" name="sscGroup" placeholder="SSC Group">
+                                   <input type="text" class="form-control" name="sscBoard" value="{{teacher.sscBoard}}" placeholder="SSC Board">
+                                   <input type="number" class="form-control" name="sscPassingYear" value="{{teacher.sscPassingYear}}" placeholder="Passing Year">
+                                   <input type="number" step="0.01" class="form-control" name="sscGPA" value="{{teacher.sscGPA}}" placeholder="SSC GPA">
+                                   
+                                </div>
+                            <div class="form-group col-lg-4">
                                 <label>HSC Result</label>
                                 <input type="text" class="form-control" name="hscGroup" value="{{teacher.hscGroup}}" placeholder="HSC Group">
                                 <input type="text" class="form-control" name="hscBoard" value="{{teacher.hscBoard}}" placeholder="HSC Board">
                                 <input type="number" class="form-control" name="hscPassingYear" value="{{teacher.hscPassingYear}}" placeholder="Passing Year">
                                 <input type="number" step="0.01" class="form-control" name="hscGPA" value="{{teacher.hscGPA}}" placeholder="HSC GPA">
-
-                            </div><div class="form-group">
-                                <label>B.A/B.Com/B.Sc Result<sub class="text-muted">*If not available for you, type "None"</sub></label>
+                                
+                            </div><div class="form-group col-lg-4">
+                                <label>B.A/B.Com/B.Sc Result</label>
                                 <input type="text" class="form-control" name="baSubject" value="{{teacher.baSubject}}" placeholder="B.A / B.Com / B.Sc Subject">
                                 <input type="text" class="form-control" name="baUniversity" value="{{teacher.baUniversity}}" placeholder="B.A / B.Com / B.Sc University">
                                 <input type="number" class="form-control" name="baPassingYear" value="{{teacher.baPassingYear}}" placeholder="Passing Year">
                                 <input type="number" step="0.01" class="form-control" name="baCGPA" value="{{teacher.baCGPA}}" placeholder="B.A / B.Com / B.Sc CGPA">
-
+                                <span class='text-muted' style=' padding: 5px; font-weight: bold;'>*If N/A for you, type
+                                    "None"</span>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group col-lg-4">
                                 <label>Parmanent Address</label>
                                 <textarea name="parmanentAddress" class="form-control" placeholder="Parmanent Address">{{teacher.parmanentAddress}}</textarea>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group col-lg-4">
                                 <label>Present Address</label>
                                 <textarea name="presentAddress" class="form-control" placeholder="Present Address">{{teacher.presentAddress}}</textarea>
                             </div>
-
-                            <div class="form-group">
-                                <label>Experience<sub class="text-muted">*If not available for you, type "None"</sub></label>
+                            
+                            <div class="form-group col-lg-4">
+                                <label>Experience</label>
                                 <textarea name="experience" class="form-control" placeholder="Experience: Institute , From - To , Position">{{teacher.experience}}</textarea>
+                                <span class='text-muted' style=' padding: 5px; font-weight: bold;'>*If N/A for you, type
+                                    "None"</span>
                             </div>
+                        </div> 
 
 
                             
@@ -178,3 +202,37 @@
       </section>
 
   {% endblock main_content %}
+
+  {% block custom_js %}
+<script>
+     $(document).ready(function () {
+         $("#monthly_payment").hide()
+        var payment_type = "{{teacher.monthly_payment_type}}"
+        var payment = "{{teacher.monthly_payment}}"
+        console.log(payment_type)
+        if(payment_type == "True"){
+            $("#monthly_payment").show()
+            $("#monthly_payment").html(`
+                    
+            <label>Monthly Honorarium</label>
+            <input type="text" class="form-control" name="monthly_payment" placeholder="Monthly Honorarium"  value="${payment}">
+            
+            `)
+        }
+        $("#payment_type").change(function () {
+            if ($("#payment_type").val() == 1) {
+                $("#monthly_payment").show()
+                $("#monthly_payment").html(`
+                    
+                    <label>Monthly Honorarium</label>
+                    <input type="text" class="form-control" name="monthly_payment" placeholder="Monthly Honorarium"  value="${payment}">
+                    
+                    `)
+            } else {
+                $("#monthly_payment").html(``)
+                $("#monthly_payment").hide()
+            }
+        })
+    });
+</script>
+  {% endblock custom_js %}

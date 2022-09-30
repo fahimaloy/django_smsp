@@ -21,6 +21,11 @@ class BatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = SectionOrBatch
         fields = "__all__"
+class SubjectSerializer(serializers.ModelSerializer):
+    batch_id = BatchSerializer()
+    class Meta:
+        model = Subjects
+        fields = "__all__"
 
 class OnlineClassSerializer(serializers.ModelSerializer):
     batch_id = BatchSerializer()
@@ -31,3 +36,34 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notifications
         fields = "__all__"
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        # fields = '__all__'
+        exclude = ('password',)
+        
+class TeacherSerializer(serializers.ModelSerializer):
+    admin = UserSerializer()
+    class Meta:
+        model = Teachers
+        fields = "__all__"
+        
+class TeacherPaymentSerializer(serializers.ModelSerializer):
+    teacher_id = TeacherSerializer()
+    class Meta:
+        model = Payment_Teacher
+        fields = "__all__"
+class PCCSerializer(serializers.ModelSerializer):
+    teacher_id = TeacherSerializer()
+    batch_id = BatchSerializer()
+    subject_id = SubjectSerializer()
+    class Meta:
+        model = PCC
+        fields = "__all__"
+class RegisteredClassSerializer(serializers.ModelSerializer):
+    teacher_id = TeacherSerializer()
+    pcc_id = PCCSerializer()
+    class Meta:
+        model = ClassAndPayment
+        fields = "__all__"
+        

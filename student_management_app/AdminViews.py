@@ -18,16 +18,28 @@ from django.core import serializers
 import json
 from datetime import datetime
 from student_management_app.models import Accountants, Notifications, PDFDetails ,CustomUser,AdditionalExpenses , CustomSMS , OnlineClass , Notices, PDFDetails , Teachers, TotalMarks , Examination , StudentResult , Classes, Subjects, Students, SectionOrBatch, FeedBackStudent, FeedBackTeachers, LeaveReportStudent,  ClassAndPayment, Attendance, AttendanceReport, PaymentStudent ,Payment_Teacher , FeesReport ,PCC
-from student_management_app.serializers import NotificationSerializer, OnlineClassSerializer
+from student_management_app.serializers import *
+
 
 
 
 def admin_home(request):
+    totalUnpaidAmount = list(ClassAndPayment.objects.filter(status=1).aggregate(Sum('per_class_charge')).values())[0] or 0
+    totalPaidAmount = list(Payment_Teacher.objects.all().order_by('-payment_upto').aggregate(Sum('payment_amount')).values())[0] or 0
+    totalRemainingAdditionalAmount = list(FeesReport.objects.filter(paid_status = 0).aggregate(Sum('extra_amount')).values())[0] or 0
+    totalRemainingAmount = list(FeesReport.objects.filter(paid_status = 0).aggregate(Sum('amount')).values())[0] or 0
+    ObtainedAmount = list(FeesReport.objects.filter(paid_status=1).order_by("-paid_at").aggregate(Sum('amount')).values())[0] or 0
+    AdditionalObtainedAmount = list(FeesReport.objects.filter(paid_status=1).order_by("-paid_at").aggregate(Sum('extra_amount')).values())[0] or 0
+    totalObtainedAmount = ObtainedAmount + AdditionalObtainedAmount
+    AdditionalExpenseAmount = list(AdditionalExpenses.objects.all().order_by("-date").aggregate(Sum('amount')).values())[0] or 0
+    totalAdditionalExpenseAmount = totalPaidAmount + AdditionalExpenseAmount or 0
+    totalDueAmount = totalUnpaidAmount - totalPaidAmount
+    totalProfit = totalObtainedAmount - totalAdditionalExpenseAmount
+    
     all_student_count = Students.objects.filter(active_status=True).count()
     subject_count = SectionOrBatch.objects.all().count()
     class_count = Classes.objects.all().count()
     teacher_count = Teachers.objects.filter(active_status=True).count()
-
     # Total Subjects and students in Each class
     class_all = Classes.objects.all()
     class_name_list = []
@@ -41,15 +53,6 @@ def admin_home(request):
         class_name_list.append(classes.class_name)
         subject_count_list.append(subjects)
         student_count_list_in_class.append(students)
-    
-    subject_all = Subjects.objects.all()
-    subject_list = []
-    student_count_list_in_subject = []
-    for subject in subject_all:
-        classes = Classes.objects.get(id=subject.class_id.id)
-        student_count = Students.objects.filter(class_id=classes.id).count()
-        subject_list.append(subject.subject_name)
-        student_count_list_in_subject.append(student_count)
     
     # For Saffs
     teacher_attendance_present_list=[]
@@ -83,6 +86,12 @@ def admin_home(request):
 
 
     context={
+        "paidAmount": totalPaidAmount,
+        "unpaidAmunt" : totalUnpaidAmount,
+        "dueAmount" : totalDueAmount,
+        "profitAmount" : totalProfit,
+        "obtainedAmount": totalObtainedAmount,
+        "remainingAmount":totalRemainingAmount,
         "st_p_req" : st_p_req ,
         "reg_classes" : reg_classes ,
         "all_student_count": all_student_count,
@@ -92,8 +101,6 @@ def admin_home(request):
         "class_name_list": class_name_list,
         "subject_count_list": subject_count_list,
         "student_count_list_in_class": student_count_list_in_class,
-        "subject_list": subject_list,
-        "student_count_list_in_subject": student_count_list_in_subject,
         "teacher_attendance_present_list": teacher_attendance_present_list,
         "teacher_registered_class_list": teacher_registered_class_list,
         "teacher_name_list": teacher_name_list,
@@ -140,6 +147,9 @@ def add_teacher_save(request):
         experience = request.POST.get('experience')
         currentInstitute = request.POST.get('currentInstitute')
         mstatus = request.POST.get('mstatus')
+        payment_type = request.POST.get('payment_type')
+        monthly_payment = request.POST.get('monthly_payment') or 0
+        
         if len(request.FILES) != 0:
             profile_pic = request.FILES['profile_pic']
             fs = FileSystemStorage()
@@ -174,7 +184,9 @@ def add_teacher_save(request):
             user.teachers.currentInstitute = currentInstitute
             user.teachers.mstatus = mstatus
             user.teachers.profile_pic = profile_pic_url
-            
+            if payment_type == 1 or payment_type == "1":
+                user.teachers.monthly_payment_type = True
+                user.teachers.monthly_payment = monthly_payment
             user.save()
             phoneNumber = "88"+str(mobileNumber)
             message_body = "Welcome to Alim's Academy "+ first_name +" "+ last_name +"!! We are very Glad to have you as a valuable part of Our Institute. Your Login Details are given Below:"+ " Username : "+ str(username)+" Password :" +str(password) +" URL: https://www.alimsacademy.xyz . Best Regards. Alim's Academy!"
@@ -249,6 +261,8 @@ def edit_teacher_save(request):
         currentInstitute = request.POST.get('currentInstitute')
         nid = request.POST.get('nid')
         mstatus = request.POST.get('mstatus')
+        payment_type = request.POST.get('payment_type')
+        monthly_payment = request.POST.get('monthly_payment') or 0
         if len(request.FILES) != 0:
             profile_pic = request.FILES['profile_pic']
             fs = FileSystemStorage()
@@ -309,6 +323,12 @@ def edit_teacher_save(request):
             teacher_model.mstatus = mstatus
             if profile_pic_url != None:
                 teacher_model,profile_pic = profile_pic_url
+            if payment_type == 1 or payment_type == "1":
+                teacher_model.monthly_payment_type = True
+                teacher_model.monthly_payment = monthly_payment
+            elif payment_type == 0 or payment_type == "0":
+                teacher_model.monthly_payment_type = False
+                teacher_model.monthly_payment = 0
             teacher_model.save()
 
             messages.success(request, "teacher Updated Successfully.")
@@ -1067,24 +1087,27 @@ def add_teachers_payment(request):
             teacher_id = request.POST.get('teachers')
             pay_upto  = request.POST.get('paymentUpto')
             payment_amount = request.POST.get('paymentAmount')
+            payment_id = request.POST.get('payment_id')
 
             teacher_obj = Teachers.objects.get(id=teacher_id)
-            # try:
-            leave_report = Payment_Teacher(teacher_id=teacher_obj,payment_upto=pay_upto, payment_amount=payment_amount )
-            phoneNumber = "88"+str(teacher_obj.mobileNumber)
-            message_body = "Dear "+teacher_obj.admin.first_name+" "+teacher_obj.admin.last_name+" Sir,  "+payment_amount +" ৳ honorium has been paid as your contribution to the institute upto "+str(pay_upto)+" . We appreciate your cooperation. Best Regards! Alim's Academy"
-            url = "http://66.45.237.70/api.php?username=aalim7374&password=ZNCS4AB9&number="+ phoneNumber +"&message="+ message_body +""
+            if(teacher_obj.monthly_payment_type and payment_id != 0):
+                payment = Payment_Teacher.objects.get(id=payment_id)
+                payment.paid = True
 
-            payload  = {}
-            headers = {
-            'Content-Type': 'application/x-www-form-urlencoded'
-            }
+            else:
+                payment = Payment_Teacher(teacher_id=teacher_obj,payment_upto=pay_upto, payment_amount=payment_amount,paid=True)
+                phoneNumber = "88"+str(teacher_obj.mobileNumber)
+                message_body = "Dear "+teacher_obj.admin.first_name+" "+teacher_obj.admin.last_name+" Sir,  "+payment_amount +" ৳ honorium has been paid as your contribution to the institute upto "+str(pay_upto)+" . We appreciate your cooperation. Best Regards! Alim's Academy"
+                url = "http://66.45.237.70/api.php?username=aalim7374&password=ZNCS4AB9&number="+ phoneNumber +"&message="+ message_body +""
 
-            #response = requests.request("POST", url, headers=headers, data = payload)
+                payload  = {}
+                headers = {
+                'Content-Type': 'application/x-www-form-urlencoded'
+                }
 
-            #print(response.text.encode('utf8'))
-            print(url)
-            leave_report.save()
+                #response = requests.request("POST", url, headers=headers, data = payload)
+
+            payment.save()
             return HttpResponse("True")
 
         except:
@@ -1510,65 +1533,22 @@ def teacher_payment_date_all(request):
         messages.error(request, "Invalid Method")
         return redirect('teacher_payment_date_filter')
     else:
-        try:
-            
+        
+        if request.POST.get('start_date') == "" or request.POST.get('end_date') == "":
             teacher_id = request.POST.get("teachers")
-               
-            try:
-                payment_details = Payment_Teacher.objects.filter(teacher_id=teacher_id).order_by('-payment_upto')
+            payment_data = TeacherPaymentSerializer(Payment_Teacher.objects.filter(teacher_id=teacher_id).order_by('-payment_upto'),many=True).data
+            payment_type = Teachers.objects.get(id=teacher_id).monthly_payment_type
+            registered_classes_data = RegisteredClassSerializer(ClassAndPayment.objects.filter(teacher_id=teacher_id).order_by('-class_date'),many=True).data
+        else:
+            start_date = datetime.strptime(request.POST.get("start_date"),'%Y-%m-%d').date()
+            end_date = datetime.strptime(request.POST.get("end_date"),'%Y-%m-%d').date()
 
-                payment_details_values = payment_details.values()
+            teacher_id = request.POST.get("teachers")
+            payment_data = TeacherPaymentSerializer(Payment_Teacher.objects.filter(teacher_id=teacher_id,payment_upto__range=(start_date,end_date)).order_by('-payment_upto'),many=True).data
+            payment_type = Teachers.objects.get(id=teacher_id).monthly_payment_type
+            registered_classes_data = RegisteredClassSerializer(ClassAndPayment.objects.filter(teacher_id=teacher_id,class_date__range=(start_date,end_date)).order_by('-class_date'),many=True).data
 
-                payment_data = list(payment_details_values)
-
-
-                teacher_obj = Teachers.objects.get(id=teacher_id)
-            
-                approved_class = ClassAndPayment.objects.filter(teacher_id=teacher_obj,status=1).order_by('-class_date')
-
-                approved_class_values = approved_class.values()
-
-                approved_class_data = list(approved_class_values)
-                ClassName = []
-                for i in approved_class:
-                    className = i.pcc_id.class_id.class_name
-                    ClassName.append(className)
-                BatchName = []
-                for i in approved_class:
-                    batchName = i.pcc_id.batch_id.batch_name
-                    BatchName.append(batchName)
-                SubjectName = []
-                for i in approved_class:
-                    subjectName = i.pcc_id.subject_id.subject_name
-                    SubjectName.append(subjectName)
-                    
-                total_payment_dict = approved_class.aggregate(Sum('per_class_charge'))
-
-                total_payment_list_values = list(total_payment_dict.values())[0]
-                
-                paid_payment_dict = payment_details.aggregate(Sum('payment_amount'))
-                paid_payment_list_values = list(paid_payment_dict.values())[0]
-
-                try:
-                    paid_payment_list_value = int(paid_payment_list_values)
-                except:
-                    paid_payment_list_value = 0
-                try:
-                    total_payment_list_value = total_payment_list_values
-                except:
-                    total_payment_list_value = 0
-                
-
-                due_payment = total_payment_list_value - paid_payment_list_value
-
-                return JsonResponse({'status':'Save', 'className':ClassName , 'SubjectName':SubjectName , 'batchName':BatchName ,'payment_data' : payment_data,'approved_class_data':approved_class_data , 'total_payment_list_value':total_payment_list_value,'paid_payment_list_value':paid_payment_list_value,'due_payment':due_payment})
-
-            except:
-                return JsonResponse({'status':'None'})
-
-        except:
-            messages.error(request, "Failed to Fetch Details . Check dates Correctly!!")
-            return redirect('teacher_payment_date_filter')
+        return JsonResponse({'status':'Save','payment_data':payment_data,'payment_type':payment_type, 'registered_classes_data':registered_classes_data})
 
 @csrf_exempt
 def teacher_payment_all(request):
@@ -1626,81 +1606,17 @@ def teacher_payment_date_filter_single(request):
         messages.error(request, "Invalid Method")
         return redirect('teacher_payment_date_filter')
     else:
-        try:
-            
-            teacher_id = request.POST.get("teachers")
-            start_date = request.POST.get("start_date")
-            end_date = request.POST.get("end_date")
 
-            
-            start_date_parse = datetime.strptime(start_date, '%Y-%m-%d').date()
-            end_date_parse = datetime.strptime(end_date, '%Y-%m-%d').date()
+        start_date = datetime.strptime(request.POST.get("start_date"),'%Y-%m-%d').date()
+        end_date = datetime.strptime(request.POST.get("end_date"),'%Y-%m-%d').date()
 
-            
+        teacher_id = request.POST.get("teachers")
+        payment_data = TeacherPaymentSerializer(Payment_Teacher.objects.filter(teacher_id=teacher_id,payment_upto__range=(start_date,end_date)).order_by('-payment_upto'),many=True).data
+        payment_type = Teachers.objects.get(id=teacher_id).monthly_payment_type
+        registered_classes_data = RegisteredClassSerializer(ClassAndPayment.objects.filter(teacher_id=teacher_id,class_date__range=(start_date,end_date)).order_by('-class_date'),many=True).data
 
+        return JsonResponse({'status':'Save','payment_data':payment_data,'payment_type':payment_type, 'registered_classes_data':registered_classes_data})
 
-
-            try:
-                payment_details = Payment_Teacher.objects.filter(teacher_id=teacher_id , payment_upto__range=(start_date_parse, end_date_parse)).order_by('-payment_upto')
-
-                payment_details_values = payment_details.values()
-
-                payment_data = list(payment_details_values)
-
-
-                teacher_obj = Teachers.objects.get(id=teacher_id)
-            
-                approved_class = ClassAndPayment.objects.filter(teacher_id=teacher_obj ,class_date__range=(start_date_parse, end_date_parse) , status=1)
-
-                approved_class_values = approved_class.values()
-
-                approved_class_data = list(approved_class_values)
-
-                    
-                total_payment_dict = approved_class.aggregate(Sum('per_class_charge'))
-
-                total_payment_list_values = list(total_payment_dict.values())[0]
-                
-                extra = []
-                for i in approved_class :
-                    className = i.pcc_id.class_id.class_name
-                    batchName = i.pcc_id.batch_id.batch_name
-                    subjectName = i.pcc_id.subject_id.subject_name
-                    details = {
-                        "className" : className ,
-                        "batches" : batchName ,
-                        'subjectName' : subjectName ,
-                    }
-                    extra.append(details)
-                
-                paid_payment_dict = payment_details.aggregate(Sum('payment_amount'))
-                paid_payment_list_values = list(paid_payment_dict.values())[0]
-                
-                try:
-                    total_payment_list_value = int(total_payment_list_values)
-                except:
-                    total_payment_list_value = 0
-                try:
-                    paid_payment_list_value = int(paid_payment_list_values)
-                except:
-                    paid_payment_list_value = 0
-                    
-                    
-
-                due_payment = total_payment_list_value - paid_payment_list_value
-
-                return JsonResponse({'status':'Save', 'extra' : extra ,'payment_data' : payment_data,'approved_class_data':approved_class_data , 'total_payment_list_value':total_payment_list_value,'paid_payment_list_value':paid_payment_list_value,'due_payment':due_payment})
-
-            except:
-                return JsonResponse({'status':'None'})
-
-        except:
-            messages.error(request, "Failed to Fetch Details . Check dates Correctly!!")
-            return redirect('teacher_payment_date_filter')
-
-
-
-  
 
 def manage_teacher_single(request , teacher_id):
 
@@ -3229,3 +3145,6 @@ def seen_notification(request,id):
         # except:
         #     return JsonResponse({"status":"error"})
     
+def all_notifications(request):
+    notifications = json.dumps(NotificationSerializer(Notifications.objects.all().order_by("-created_at"),many=True).data)
+    return render(request,"admin_template/all_notifications.html",{"nots":notifications})

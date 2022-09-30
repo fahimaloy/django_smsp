@@ -104,30 +104,10 @@
           <!-- /.row -->
           <div class="row">
             <div class="col-lg-6">
-              <!-- PIE CHART -->
-              <div class="card card-danger">
-                <div class="card-header">
-                  <h3 class="card-title">Student and teacher Chart</h3>
-
-                  <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
-                  </div>
-                </div>
-                <div class="card-body">
-                  <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-                </div>
-                <!-- /.card-body -->
-              </div>
-              <!-- /.card -->
-            </div>
-
-            <div class="col-lg-6">
               <!-- DONUT CHART -->
               <div class="card card-danger">
                 <div class="card-header">
-                  <h3 class="card-title">Total Subjects in Each class</h3>
+                  <h3 class="card-title">Income Statement</h3>
 
                   <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
@@ -143,12 +123,31 @@
               <!-- /.card -->
               
             </div>
+            <div class="col-lg-6">
+              <!-- PIE CHART -->
+              <div class="card card-danger">
+                <div class="card-header">
+                  <h3 class="card-title">Student and Teacher Chart</h3>
+
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+            </div>
+
           </div>
 
           <div class="row">
 
             <div class="col-lg-6">
-              <!-- PIE CHART -->
               <div class="card card-info">
                 <div class="card-header">
                   <h3 class="card-title">Total Student in Each class</h3>
@@ -162,16 +161,16 @@
                 <div class="card-body">
                   <canvas id="pieChart2" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                 </div>
-                <!-- /.card-body -->
                 </div>
             </div>
 
+            
             <div class="col-lg-6">
-              <!-- PIE CHART -->
-              <div class="card card-info">
+              <!-- BAR CHART -->
+              <div class="card card-success">
                 <div class="card-header">
-                  <h3 class="card-title">Total Students in Each Subject</h3>
-
+                  <h3 class="card-title">Student Attendance vs Leave</h3>
+  
                   <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
                     </button>
@@ -179,64 +178,16 @@
                   </div>
                 </div>
                 <div class="card-body">
-                  <canvas id="pieChart3" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                  <div class="chart">
+                    <canvas id="barChart2" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                  </div>
                 </div>
                 <!-- /.card-body -->
-            </div>
-            </div>
+              </div>
+              <!-- /.card -->
           </div>
 
         <div class="row">
-          <div class="col-lg-12">
-            <!-- BAR CHART -->
-            <div class="card card-success">
-              <div class="card-header">
-                <h3 class="card-title">teacher Attendance vs Leave</h3>
-
-                <div class="card-tools">
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
-                </div>
-              </div>
-              <div class="card-body">
-                <div class="chart">
-                  <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-                </div>
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
-          </div>
-
-
-          <div class="col-lg-6">
-            
-          </div>
-        
-        </div>
-
-        <div class="row">
-          <div class="col-lg-12">
-            <!-- BAR CHART -->
-            <div class="card card-success">
-              <div class="card-header">
-                <h3 class="card-title">Student Attendance vs Leave</h3>
-
-                <div class="card-tools">
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
-                </div>
-              </div>
-              <div class="card-body">
-                <div class="chart">
-                  <canvas id="barChart2" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-                </div>
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
           </div>
 
 
@@ -263,7 +214,7 @@
         ],
         datasets: [
           {
-            data: [{{ all_student_count }}, {{ teacher_count }}],
+            data: ["{{ all_student_count }}", "{{ teacher_count }}"],
             backgroundColor : ['#f56954', '#00a65a'],
           }
         ]
@@ -286,37 +237,45 @@
         data: pieData,
         options: pieOptions      
       })
-
-
-      // Get context with jQuery - using jQuery's .get() method.
-      var class_name_list = {{ class_name_list|safe }}
-      var subject_count_list = {{ subject_count_list }}
       var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
-      var donutData        = {
-        labels: class_name_list,
+      var pieData        = {
+        labels: [
+            "Obtained: {{obtainedAmount}} ৳",
+            'Remaining To Obtain: {{remainingAmount}} ৳', 
+            'Paid: {{paidAmount}} ৳',
+            'Remaining To Pay: {{dueAmount}} ৳',
+        ],
         datasets: [
           {
-            data: subject_count_list,
-            backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
+            // data: [{{ paidAmount }}, {{ obtainedAmount }}],
+            data:["{{obtainedAmount}}","{{remainingAmount}}","{{paidAmount}}","{{dueAmount}}"],
+            backgroundColor : ['#f56954', '#00a65a','#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
           }
         ]
       }
-      var donutOptions     = {
+
+      //-------------
+      //- PIE CHART -
+      //-------------
+      // Get context with jQuery - using jQuery's .get() method.
+      var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
+      var pieData        = pieData;
+      var pieOptions     = {
         maintainAspectRatio : false,
         responsive : true,
       }
       //Create pie or douhnut chart
       // You can switch between pie and douhnut using the method below.
-      var donutChart = new Chart(donutChartCanvas, {
-        type: 'doughnut',
-        data: donutData,
-        options: donutOptions      
+      var pieChart = new Chart(donutChartCanvas, {
+        type: 'pie',
+        data: pieData,
+        options: pieOptions      
       })
-
 
       // Total Students in Each class
       //var donutChartCanvas = $('#pieChart2').get(0).getContext('2d')
-      var student_count_list_in_class = {{ student_count_list_in_class }}
+      var class_name_list = {{ class_name_list|safe }}
+      var student_count_list_in_class = "{{ student_count_list_in_class }}"
       var pieData2 = {
         labels: class_name_list,
         datasets: [
@@ -344,92 +303,7 @@
         options: pieOptions2      
       })
 
-      // Total Students in Each Subject
-      var student_count_list_in_subject = {{ student_count_list_in_subject }}
-      var subject_list = {{ subject_list|safe }}
-      var pieData3 = {
-        labels: subject_list,
-        datasets: [
-          {
-            data: student_count_list_in_subject,
-            backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-          }
-        ]
-      }
-
-      //-------------
-      //- PIE CHART -
-      //-------------
-      // Get context with jQuery - using jQuery's .get() method.
-      var pieChartCanvas3 = $('#pieChart3').get(0).getContext('2d')
-      var pieData3        = pieData3;
-      var pieOptions3     = {
-        maintainAspectRatio : false,
-        responsive : true,
-      }
-
-      var pieChart3 = new Chart(pieChartCanvas3, {
-        type: 'pie',
-        data: pieData3,
-        options: pieOptions3      
-      })
-
-      //-------------
-      //- BAR CHART - teacher Attendance vs Leave
-      //-------------
-
-      var teacher_attendance_present_list = {{ teacher_attendance_present_list }};
-      var teacher_registered_class_list = {{ teacher_registered_class_list }};
-      var teacher_name_list = {{ teacher_name_list|safe }};
-
-      var areaChartData = {
-        labels  : teacher_name_list,
-        datasets: [
-          {
-            label               : 'Leave',
-            backgroundColor     : 'rgba(60,141,188,0.9)',
-            borderColor         : 'rgba(60,141,188,0.8)',
-            pointRadius          : false,
-            pointColor          : '#3b8bba',
-            pointStrokeColor    : 'rgba(60,141,188,1)',
-            pointHighlightFill  : '#fff',
-            pointHighlightStroke: 'rgba(60,141,188,1)',
-            data                : teacher_registered_class_list 
-          },
-          {
-            label               : 'Attendance',
-            backgroundColor     : 'rgba(210, 214, 222, 1)',
-            borderColor         : 'rgba(210, 214, 222, 1)',
-            pointRadius         : false,
-            pointColor          : 'rgba(210, 214, 222, 1)',
-            pointStrokeColor    : '#c1c7d1',
-            pointHighlightFill  : '#fff',
-            pointHighlightStroke: 'rgba(220,220,220,1)',
-            data                : teacher_attendance_present_list
-          },
-        ]
-      }
-
-
-      var barChartCanvas = $('#barChart').get(0).getContext('2d')
-      var barChartData = jQuery.extend(true, {}, areaChartData)
-      var temp0 = areaChartData.datasets[0]
-      var temp1 = areaChartData.datasets[1]
-      barChartData.datasets[0] = temp1
-      barChartData.datasets[1] = temp0
-
-      var barChartOptions = {
-        responsive              : true,
-        maintainAspectRatio     : false,
-        datasetFill             : false
-      }
-
-      var barChart = new Chart(barChartCanvas, {
-        type: 'bar', 
-        data: barChartData,
-        options: barChartOptions
-      })
-
+     
 
         //- BAR CHART - Student Attendance vs Leave
       //-------------

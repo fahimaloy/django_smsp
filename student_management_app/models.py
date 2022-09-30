@@ -1,4 +1,5 @@
 # Create your models here.
+from pyexpat import model
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models.signals import post_save
@@ -48,6 +49,8 @@ class Teachers(models.Model):
     currentInstitute = models.CharField(max_length=500,null=True)
     dateOfBirth = models.DateField(null=True)
     experience = models.TextField(null=True)
+    monthly_payment = models.IntegerField(default=0)
+    monthly_payment_type = models.BooleanField(default=False)
     active_status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -112,6 +115,7 @@ class Payment_Teacher(models.Model) :
     teacher_id = models.ForeignKey(Teachers, on_delete=models.CASCADE)
     payment_amount = models.IntegerField()
     payment_upto = models.DateTimeField(auto_now=False,auto_now_add=False)
+    paid = models.BooleanField(default=False)
     objects = models.Manager()
 
 
