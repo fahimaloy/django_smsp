@@ -1527,28 +1527,46 @@ def teacher_payment_date_filter(request):
         "teachers": teachers
     }
     return render(request, "admin_template/teacher_payment_date_filter.html", context)
+def get_teachers_expenses(total,paid,type):
+    if type != True :
+        Total = list(total.aggregate(Sum('per_class_charge')).values())[0] or 0
+        Paid = list(paid.aggregate(Sum('payment_amount')).values())[0] or 0
+        Due = Total - Paid
+    elif type:
+        Total = list(total.aggregate(Sum('payment_amount')).values())[0] or 0
+        Paid = list(paid.aggregate(Sum('payment_amount')).values())[0] or 0
+        Due = Total - Paid
+    return {"paid":Paid,"due":Due,"total":Total}
 @csrf_exempt
 def teacher_payment_date_all(request):
     if request.method != "POST":
         messages.error(request, "Invalid Method")
         return redirect('teacher_payment_date_filter')
     else:
-        
+        teacher_id = request.POST.get("teachers")
+        payment_type = Teachers.objects.get(id=teacher_id).monthly_payment_type
         if request.POST.get('start_date') == "" or request.POST.get('end_date') == "":
-            teacher_id = request.POST.get("teachers")
-            payment_data = TeacherPaymentSerializer(Payment_Teacher.objects.filter(teacher_id=teacher_id).order_by('-payment_upto'),many=True).data
-            payment_type = Teachers.objects.get(id=teacher_id).monthly_payment_type
+            payment_obj = Payment_Teacher.objects.filter(teacher_id=teacher_id).order_by('-payment_upto')
+            registered_classes_obj = ClassAndPayment.objects.filter(teacher_id=teacher_id,status=1).order_by('-class_date')
+            payment_data = TeacherPaymentSerializer(payment_obj,many=True).data
             registered_classes_data = RegisteredClassSerializer(ClassAndPayment.objects.filter(teacher_id=teacher_id).order_by('-class_date'),many=True).data
+            
+            if payment_type != True:
+                statements = get_teachers_expenses(registered_classes_obj,payment_obj,False)
+            elif payment_type:
+                statements = get_teachers_expenses(payment_obj,Payment_Teacher.objects.filter(teacher_id=teacher_id,paid=True).order_by('-payment_upto'),True)
         else:
             start_date = datetime.strptime(request.POST.get("start_date"),'%Y-%m-%d').date()
             end_date = datetime.strptime(request.POST.get("end_date"),'%Y-%m-%d').date()
-
-            teacher_id = request.POST.get("teachers")
-            payment_data = TeacherPaymentSerializer(Payment_Teacher.objects.filter(teacher_id=teacher_id,payment_upto__range=(start_date,end_date)).order_by('-payment_upto'),many=True).data
-            payment_type = Teachers.objects.get(id=teacher_id).monthly_payment_type
+            payment_obj = Payment_Teacher.objects.filter(teacher_id=teacher_id,payment_upto__range=(start_date,end_date)).order_by('-payment_upto')
+            payment_data = TeacherPaymentSerializer(payment_obj,many=True).data
+            registered_classes_obj = ClassAndPayment.objects.filter(teacher_id=teacher_id,status=1,class_date__range=(start_date,end_date)).order_by('-class_date')
             registered_classes_data = RegisteredClassSerializer(ClassAndPayment.objects.filter(teacher_id=teacher_id,class_date__range=(start_date,end_date)).order_by('-class_date'),many=True).data
-
-        return JsonResponse({'status':'Save','payment_data':payment_data,'payment_type':payment_type, 'registered_classes_data':registered_classes_data})
+            if payment_type != True:
+                statements = get_teachers_expenses(registered_classes_obj,payment_obj,False)
+            elif payment_type:
+                statements = get_teachers_expenses(payment_obj,Payment_Teacher.objects.filter(teacher_id=teacher_id,paid=True,payment_upto__range=(start_date,end_date)).order_by('-payment_upto'),True)
+        return JsonResponse({'status':'200','payment_data':payment_data,'payment_type':payment_type, 'registered_classes_data':registered_classes_data,"statements":statements})
 
 @csrf_exempt
 def teacher_payment_all(request):

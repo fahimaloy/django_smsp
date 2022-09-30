@@ -90,10 +90,8 @@ View Teachers Registered Classes and Payment Informations
                         <button type="button" class="btn btn-primary reply_open_modal" data-toggle="modal"
                             data-target="#paymentModal" id="add_payment">Add Payment</button>
 
-
-
                     </div>
-
+                    
                 </div>
 
 
@@ -105,70 +103,24 @@ View Teachers Registered Classes and Payment Informations
             <!-- /.card -->
 
         </div>
-
-
-        <div class="row" id="table-toggle" >
+        
+        
+        <div class="row table-toggle" id="" >
+            <table class="table table-toggle table-bordered" id="statements">
+                
+            </table>
             
 
 
             <div class="col-md-12">
                 <!-- general form elements -->
-                <div class="card card-primary tables">
+                <div class="card card-dark tables">
 
                     <!-- /.card-header -->
 
 
                     <div class="card-header" style="display: flex;justify-content: center;">
-
-
-                        <b>Class History</b>
-
-                    </div>
-
-
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th>#SL</th>
-                                        <th>Class Details</th>
-                                        <th>Class Date</th>
-                                        <th>From</th>
-                                        <th>To</th>
-                                        <th>Payment</th>
-                                        <th>Action</th>
-
-                                    </tr>
-                                </thead>
-
-
-                                <tbody id="registered_class_table"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-
-                </div>
-                <!-- /.card -->
-
-
-
-
-            </div>
-            <!-- /.card -->
-            <div class="col-md-12">
-                <!-- general form elements -->
-                <div class="card card-success tables">
-
-                    <!-- /.card-header -->
-
-
-                    <div class="card-header" style="display: flex;justify-content: center;">
-
-
                         <b>Payment History</b>
-
                     </div>
 
 
@@ -193,6 +145,52 @@ View Teachers Registered Classes and Payment Informations
                 </div>
             </div>
 
+            <div class="col-md-12">
+                <!-- general form elements -->
+                <div class="card card-secondary tables">
+
+                    <!-- /.card-header -->
+
+
+                    <div class="card-header" style="display: flex;justify-content: center;">
+
+
+                        <b>Class History</b>
+
+                    </div>    
+
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>#SL</th>
+                                        <th>Class Details</th>
+                                        <th>Class Date</th>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Payment</th>
+                                        <th>Action</th>
+
+                                    </tr>    
+                                </thead>    
+
+
+                                <tbody id="registered_class_table"></tbody>
+                            </table>    
+                        </div>    
+                    </div>    
+
+
+                </div>    
+                <!-- /.card -->
+
+
+
+
+            </div>    
+            <!-- /.card -->
 
 
 
@@ -259,6 +257,7 @@ View Teachers Registered Classes and Payment Informations
 
             success: function (data) {
                 monthly_payment_type = data.payment_type
+                console.log(data);
                 for (let i = 0; i < data.payment_data.length; i++) {
                     paymentOutput += `
                         <tr>
@@ -300,6 +299,15 @@ View Teachers Registered Classes and Payment Informations
                 $("#payment_table_heading").html(payment_table_heading)
                 $("#registered_class_table").html(registeredClassOutput);
                 $("#payment_table").html(paymentOutput);
+                $("#statements").html(`
+                <thead class="thead">
+                    <tr class="">
+                    <th scope="col" class="text-white text-center bg-info">Total: ${data.statements.total}</th>
+                    <th scope="col" class="text-white text-center bg-success">Paid: ${data.statements.paid}</th>
+                    <th scope="col" class="text-white text-center bg-warning">Due: ${data.statements.due}</th>
+                    </tr>
+                </thead>
+                `)
             }
         }); // Ajax Ends Here
     }; // fetchData Function Ends Here
@@ -329,15 +337,15 @@ View Teachers Registered Classes and Payment Informations
             })
     }
     $(document).ready(function () {
-        $("#table-toggle").hide()
+        $(".table-toggle").hide()
         $("#fetch_data").hide()
         let monthly_payment_type = ""
 
         $(document).on("change", "#teachers", function () { 
-            $("#table-toggle").hide(); 
+            $(".table-toggle").hide(); 
             if($(this).val()!="0"){
                 fetchData(); 
-                $("#table-toggle").show() 
+                $(".table-toggle").show() 
             }else{
                 $("#add_payment").hide();
                 $("#fetch_data").hide()
@@ -347,7 +355,7 @@ View Teachers Registered Classes and Payment Informations
         $(document).on("change", "#inputVal", function () {
             $("#fetch_data").show()
         })
-        $("#fetch_data").click(function () {$("#table-toggle").hide(); fetchData($("#inputVal").val(), $("#inputVal2").val()); $("#table-toggle").show(); }); // Fetch Data in selected Date Range
+        $("#fetch_data").click(function () {$(".table-toggle").hide(); fetchData($("#inputVal").val(), $("#inputVal2").val()); $(".table-toggle").show(); }); // Fetch Data in selected Date Range
         $(document).on("click", "#add_payment_button", function () {
             $(this).attr("disabled", "disable")
             $(this).text("Saving Data...")
