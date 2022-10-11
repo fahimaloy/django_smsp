@@ -136,11 +136,10 @@ Expenses Details
               <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
-          <div class="col-lg-3 col-6 table-show">
-             <!--small box -->
+
+          <!-- <div class="col-lg-3 col-6 table-show">
             <div class="small-box bg-success">
               <div class="inner">
-                <!--<h3 class="h3-hide" >৳ {{ totalRecievedAmount }}</h3>-->
                 <h3 class="" id="totalRecievedAmount"></h3>
 
                 <p>Total Recieved Amounts</p>
@@ -150,7 +149,7 @@ Expenses Details
               </div>
               <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
-          </div>
+          </div> -->
 
           
         
@@ -319,7 +318,7 @@ Expenses Details
                             <table id="datatable3" class="table">
                                 <thead class="thead-dark">
                                     <tr>
-                                        <td colspan="6" class="bg-info" style="text-align: center;">
+                                        <td colspan="8" class="bg-info" style="text-align: center;">
 
                                             Total Amount Recieved
                                         </td>
@@ -465,36 +464,34 @@ Expenses Details
                         $(".table-hide").hide();
                         $(".h3-hide").hide();
                         $(".h3-show").show();
+                       console.log(data); 
                         
-                        
-                        if(data.status == "OK"){
+                        if(data.status === 200 ){
                             
-                            let paymentTeacherList = data.paymentTeacherList;
-                            let ptList = data.ptList;
-                            let stList = data.stList;
-                            let paymentStudentList = data.paymentStudentList;
-                            let expensesList = data.expensesList;
-                            // let totalpaidlist = data.totalpaidlist;
-                            let totalRecievedAmount = data.totalRecievedAmount;
-                            let total_recieved_list = data.total_recieved_list;
-                            let paid_st_list = data.paid_st_list;
-                            
+                            let paymentTeacherList = data.teacher_payments_data;
+                            // let ptList = data.ptList;
+                            // let stList = data.stList;
+                            let paymentStudentList = data.student_payments_data;
+                            let expensesList = data.total_additional_expenses;
+                            // // let totalpaidlist = data.totalpaidlist;
+                            // let totalRecievedAmount = data.totalRecievedAmount;
+                            let total_recieved_list = data.total_recieved_payments_data;
+                            // let paid_st_list = data.paid_st_list;
+                            console.log(paymentTeacherList);
 
                                 for(i=0;i<paymentTeacherList.length; i++){
-                                    
-                                    output += "<tr><td>"+ parseInt(i+1) +"</td><td>"+ptList[i]+"</td><td>"+paymentTeacherList[i].payment_upto+"</td><td>"+paymentTeacherList[i].payment_amount+" ৳</td></tr>";
-
-                                }
+                                        output += "<tr><td>"+ parseInt(i+1) +"</td><td>"+paymentTeacherList[i].teacher_id.admin.first_name+" "+paymentTeacherList[i].teacher_id.admin.last_name+"</td><td>"+paymentTeacherList[i].payment_upto+"</td><td>"+paymentTeacherList[i].payment_amount+" ৳</td></tr>";
+                                    }
 
                                 for (i=0;i<paymentStudentList.length;i++){
-                                    output2 += "<tr><td>"+ parseInt(i+1) +"</td><td>"+stList[i]+"</td><td>"+paymentStudentList[i].fees_title+"</td><td>"+paymentStudentList[i].amount+" ৳</td><td>"+paymentStudentList[i].extra_fees_title+"["+paymentStudentList[i].extra_amount+"]</td></tr>";
+                                    output2 += "<tr><td>"+ parseInt(i+1) +"</td><td>"+paymentStudentList[i].student_id.admin.first_name+" "+paymentStudentList[i].student_id.admin.last_name+"</td><td>"+paymentStudentList[i].fees_title+"</td><td>"+paymentStudentList[i].amount+" ৳</td><td>"+paymentStudentList[i].extra_fees_title+"["+paymentStudentList[i].extra_amount+"]</td></tr>";
                                 }
 
                                 for(i=0;i<expensesList.length;i++){
                                     output3 += "<tr><td>"+ parseInt(i+1) +"</td><td>"+expensesList[i].title+"</td><td>"+expensesList[i].date+"</td><td>"+expensesList[i].amount+" ৳</td></tr>";
                                 }
                                 for(i=0;i<total_recieved_list.length;i++){
-                                    output4 += "<tr><td>"+ parseInt(i+1) +"</td><td>"+paid_st_list[i]+"</td><td>"+total_recieved_list[i].fees_title+"</td><td>"+total_recieved_list[i].paid_at+"</td><td>"+total_recieved_list[i].amount+" ৳</td></tr>";
+                                    output4 += "<tr><td>"+ parseInt(i+1) +"</td><td>"+total_recieved_list[i].student_id.admin.first_name+" "+total_recieved_list[i].student_id.admin.last_name+"</td><td>"+total_recieved_list[i].fees_title+"</td><td>"+total_recieved_list[i].paid_at+"</td><td>"+total_recieved_list[i].amount+" ৳</td></tr>";
                                     
                                 }
                         }
@@ -503,19 +500,18 @@ Expenses Details
                             $("#table-show-1").html(output);
                             $("#table-show-2").html(output2);
                             $("#table-show-3").html(output3);
-                            $('#totalpaidlist').html(data.totalpaidlist);
-                            $('#totalobtainedlist').html(data.totalobtainedlist);
-                            $('#totalAElist').html(data.totalAElist);
-                            $('#totalexpenses').html(data.totalexpenses);
-                            $('#totalprofit').html(data.totalprofit);
-                            $('#totalDueAmount').html(data.totalDueAmount);
-                            $('#totalRamount').html(data.totalRamount);
                             $('#table-show-4').html(output4);
-                            $('#totalRecievedAmount').html(data.totalRecievedAmount);
+                            $('#totalpaidlist').html(data.paid_amount);
+                            $('#totalobtainedlist').html(data.recieved_amount);
+                            $('#totalAElist').html(data.additional_expenses_amount);
+                            $('#totalexpenses').html(data.total_expenses);
+                            $('#totalprofit').html(data.profit_amount);
+                            $('#totalDueAmount').html(data.unpaid_amount);
+                            $('#totalRamount').html(data.recievable_amount);
+                            // $('#totalRecievedAmount').html(data.totalRecievedAmount);
                             
                             
 
-                            console.log(data.totalpaidlist)
                             
                             // console.log(data.paymentTeacherList);
                             

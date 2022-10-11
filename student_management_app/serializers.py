@@ -47,7 +47,12 @@ class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teachers
         fields = "__all__"
-        
+class StudentSerializer(serializers.ModelSerializer):
+    admin = UserSerializer()
+    class Meta:
+        model = Students
+        fields = "__all__"
+       
 class TeacherPaymentSerializer(serializers.ModelSerializer):
     teacher_id = TeacherSerializer()
     class Meta:
@@ -65,5 +70,17 @@ class RegisteredClassSerializer(serializers.ModelSerializer):
     pcc_id = PCCSerializer()
     class Meta:
         model = ClassAndPayment
+        fields = "__all__"
+class StudentPaymentSerializer(serializers.ModelSerializer):
+    student_id = StudentSerializer()
+    batch_id = BatchSerializer()
+    class Meta:
+        model = FeesReport
+        fields = "__all__"
+        
+class AdditionalExpensesSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = AdditionalExpenses
         fields = "__all__"
         

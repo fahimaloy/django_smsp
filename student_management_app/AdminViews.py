@@ -1900,117 +1900,172 @@ def add_expenses(request):
         except:
             return HttpResponse("False")
     
+# @csrf_exempt
+# def get_expenses(request):
+    
+#     start_date = request.POST.get("start_date")
+#     end_date = request.POST.get("end_date")
+    
+#     start_date_parse = datetime.strptime(start_date, '%Y-%m-%d').date()
+#     end_date_parse = datetime.strptime(end_date, '%Y-%m-%d').date()
+    
+#     paymentTeacher = Payment_Teacher.objects.filter(payment_upto__range=(start_date_parse , end_date_parse)).order_by('-payment_upto')
+#     paymentTeacherValues = paymentTeacher.values()
+#     paymentTeacherList = list(paymentTeacherValues)
+
+#     paymentStudent = FeesReport.objects.filter(paid_status=1,fees_date__range=(start_date_parse , end_date_parse)).order_by("-paid_at")
+
+#     paymentStudentValues = paymentStudent.values()
+
+#     paymentStudentList = list(paymentStudentValues)
+    
+#     total_recieved = FeesReport.objects.filter(paid_status=1 , paid_at__range=(start_date_parse , end_date_parse)).order_by("paid_at")
+#     total_recieved_val = total_recieved.values()
+#     total_recieved_list = list(total_recieved_val)
+    
+#     totalRecieved = total_recieved.aggregate(Sum('amount'))
+#     totalAdditionalRecieved = total_recieved.aggregate(Sum('extra_amount'))
+#     totalRAmounts = list(totalRecieved.values())[0] 
+#     totalRAdditionalAmount =  list(totalAdditionalRecieved.values())[0]
+#     try:
+#         totalRecievedAmount = int(totalRAmounts) + int(totalRAdditionalAmount)
+#     except:
+#         totalRecievedAmount = 0
+    
+#     additionalExpenses = AdditionalExpenses.objects.filter(date__range=(start_date_parse , end_date_parse)).order_by("-date")
+  
+#     totalRpayment = FeesReport.objects.filter(paid_status=0 , fees_date__range=(start_date_parse , end_date_parse))
+#     totalr = totalRpayment.aggregate(Sum('amount'))
+#     totalrAdditional = totalRpayment.aggregate(Sum('extra_amount'))
+#     totalRamountsAdditional = list(totalrAdditional.values())[0] 
+#     totalRamounts = list(totalr.values())[0]
+#     try:
+#         totalRamount = int(totalRamounts) + int(totalRamountsAdditional)
+#     except:
+#         totalRamount = 0
+
+    
+#     pt = Payment_Teacher.objects.filter(payment_upto__range=(start_date_parse , end_date_parse)).order_by('-payment_upto')
+#     ptList = []
+#     for i in pt:
+#         teacher_name = Teachers.objects.get(id=i.teacher_id.id)
+#         ptList.append(teacher_name.admin.first_name+" "+teacher_name.admin.last_name)
+    
+#     st = FeesReport.objects.filter(paid_status=1,fees_date__range=(start_date_parse , end_date_parse))
+#     stList = []
+#     for i in st:
+#         student_name = Students.objects.get(id=i.student_id.id)
+#         stList.append(student_name.admin.first_name+" "+student_name.admin.last_name)
+#     paid_st_list = []
+#     for i in total_recieved:
+#         student_name = Students.objects.get(id=i.student_id.id)
+#         paid_st_list.append(student_name.admin.first_name+" "+student_name.admin.last_name)
+    
+#     expenses = AdditionalExpenses.objects.filter(date__range=(start_date_parse , end_date_parse))
+#     expensesValues = expenses.values()
+#     expensesList = list(expensesValues)
+    
+#     totalpaid = paymentTeacher.aggregate(Sum('payment_amount'))
+#     totalpaidlists = list(totalpaid.values())[0]
+
+#     totalobtained = paymentStudent.aggregate(Sum('amount'))
+#     totalobtainedadditional = paymentStudent.aggregate(Sum('extra_amount'))
+#     totalobtainedlists = list(totalobtained.values())[0]  
+#     totaladditionaobtained = list(totalobtainedadditional.values())[0]
+    
+#     totalAE = additionalExpenses.aggregate(Sum('amount'))
+#     totalAElist = list(totalAE.values())[0]
+    
+#     try:
+#         totalobtainedlist = int(totalobtainedlists) + int(totaladditionaobtained)
+        
+#     except:
+#         totalobtainedlist = 0
+        
+        
+#     try:
+#         totalpaidlist = int(totalpaidlists)
+#     except:
+#         totalpaidlist = 0
+    
+#     totalAE = additionalExpenses.aggregate(Sum('amount'))
+#     totalAElist = list(totalAE.values())[0]
+    
+#     try:
+#         totalexpenses = int(totalpaidlist) + int(totalAElist)
+#     except:
+#         totalexpenses = 0
+
+    
+#     totalprofit = totalobtainedlist - totalexpenses
+    
+#     totalUnpaid = ClassAndPayment.objects.filter(status=1 , class_date__range=(start_date_parse , end_date_parse))
+    
+#     totalUnpaidAmount = totalUnpaid.aggregate(Sum('per_class_charge'))
+#     totalUnpaidlists = list(totalUnpaidAmount.values())[0]
+#     try:
+#         totalUnpaidlist = int(totalUnpaidlists)
+#     except:
+#         totalUnpaidlist = 0
+#     totalDueAmount = totalUnpaidlist - totalpaidlist
+
+#     return JsonResponse({'status':'OK', 'ptList':ptList , 'paid_st_list':paid_st_list ,'total_recieved_list': total_recieved_list  , 'totalRecievedAmount':totalRecievedAmount , 'totalRamount' : totalRamount , 'totalDueAmount':totalDueAmount , 'totalprofit':totalprofit ,'totalobtainedlist':totalobtainedlist , 'totalexpenses':totalexpenses , 'totalAElist':totalAElist , 'totalpaidlist':totalpaidlist, 'stList':stList ,'expensesList':expensesList,'paymentStudentList':paymentStudentList ,'paymentTeacherList':paymentTeacherList})
 @csrf_exempt
 def get_expenses(request):
-    
     start_date = request.POST.get("start_date")
     end_date = request.POST.get("end_date")
     
     start_date_parse = datetime.strptime(start_date, '%Y-%m-%d').date()
     end_date_parse = datetime.strptime(end_date, '%Y-%m-%d').date()
+    # Query_Dict = Teacher's Payment (ClassBased Payment)
+    teacher_payments_obj = Payment_Teacher.objects.filter(paid=True,payment_upto__range=(start_date_parse , end_date_parse)).order_by('-payment_upto')
+    # Query_Dict: Students Paid Fees of Date Range
+    student_payments_obj = FeesReport.objects.filter(paid_status=1,fees_date__range=(start_date_parse , end_date_parse)).order_by("-paid_at")
+    # Query_Dict: Additional Expenses
+    additional_expenses_obj = AdditionalExpenses.objects.filter(date__range=(start_date_parse , end_date_parse)).order_by("-date")
+    # Query_Dict: Obtained From Students Paid Between Date
+    total_recieved_payments_obj = FeesReport.objects.filter(paid_status=1 , paid_at__range=(start_date_parse , end_date_parse)).order_by("paid_at")
     
-    paymentTeacher = Payment_Teacher.objects.filter(payment_upto__range=(start_date_parse , end_date_parse)).order_by('-payment_upto')
-    paymentTeacherValues = paymentTeacher.values()
-    paymentTeacherList = list(paymentTeacherValues)
+    total_unpaid_class_based_obj = ClassAndPayment.objects.filter(status=1 , teacher_id__monthly_payment_type=False , class_date__range=(start_date_parse , end_date_parse))
+    total_unpaid_monthly_obj = Payment_Teacher.objects.filter(paid=False,payment_upto__range=(start_date_parse , end_date_parse)).order_by('-payment_upto')
+    total_recievable_payment_data = FeesReport.objects.filter(paid_status=0 , fees_date__range=(start_date_parse , end_date_parse))
 
-    paymentStudent = FeesReport.objects.filter(paid_status=1,fees_date__range=(start_date_parse , end_date_parse)).order_by("-paid_at")
+    # Serializing Datas
+    teacher_payments_data = TeacherPaymentSerializer(teacher_payments_obj,many=True).data
+    student_payments_data = StudentPaymentSerializer(student_payments_obj,many=True).data
+    total_recieved_payments_data = StudentPaymentSerializer(total_recieved_payments_obj,many=True).data 
+    total_unpaid_class_based_data = RegisteredClassSerializer(total_unpaid_class_based_obj,many=True).data
+    # total_unpaid_monthly_data = TeacherPaymentSerializer(total_unpaid_monthly_obj,many=True).data
+    total_additional_expenses = AdditionalExpensesSerializer(additional_expenses_obj,many=True).data
 
-    paymentStudentValues = paymentStudent.values()
+    total_recieved_amount = (list(total_recieved_payments_obj.aggregate(Sum('amount')).values())[0] or 0) + (list(total_recieved_payments_obj.aggregate(Sum('extra_amount')).values())[0] or 0)
+    total_recievable_amount = (list(total_recievable_payment_data.aggregate(Sum('amount')).values())[0] or 0) + (list(total_recievable_payment_data.aggregate(Sum('extra_amount')).values())[0] or 0)
+    total_additional_expenses_amount = list(additional_expenses_obj.aggregate(Sum('amount')).values())[0] or 0
+    total_paid_amount = list(teacher_payments_obj.aggregate(Sum('payment_amount')).values())[0] or 0
+    total_unpaid_amount = ((list(total_unpaid_class_based_obj.aggregate(Sum('per_class_charge')).values())[0] or 0) - (list(Payment_Teacher.objects.filter(paid=True,teacher_id__monthly_payment_type=False,payment_upto__range=(start_date_parse , end_date_parse)).aggregate(Sum('payment_amount')).values())[0] or 0)) + (list(total_unpaid_monthly_obj.aggregate(Sum('payment_amount')).values())[0] or 0)
+    
+    total_expenses = total_paid_amount + total_additional_expenses_amount
 
-    paymentStudentList = list(paymentStudentValues)
+    total_profit = total_recieved_amount - total_expenses
     
-    total_recieved = FeesReport.objects.filter(paid_status=1 , paid_at__range=(start_date_parse , end_date_parse)).order_by("paid_at")
-    total_recieved_val = total_recieved.values()
-    total_recieved_list = list(total_recieved_val)
-    
-    totalRecieved = total_recieved.aggregate(Sum('amount'))
-    totalAdditionalRecieved = total_recieved.aggregate(Sum('extra_amount'))
-    totalRAmounts = list(totalRecieved.values())[0] 
-    totalRAdditionalAmount =  list(totalAdditionalRecieved.values())[0]
-    try:
-        totalRecievedAmount = int(totalRAmounts) + int(totalRAdditionalAmount)
-    except:
-        totalRecievedAmount = 0
-    
-    additionalExpenses = AdditionalExpenses.objects.filter(date__range=(start_date_parse , end_date_parse)).order_by("-date")
-  
-    totalRpayment = FeesReport.objects.filter(paid_status=0 , fees_date__range=(start_date_parse , end_date_parse))
-    totalr = totalRpayment.aggregate(Sum('amount'))
-    totalrAdditional = totalRpayment.aggregate(Sum('extra_amount'))
-    totalRamountsAdditional = list(totalrAdditional.values())[0] 
-    totalRamounts = list(totalr.values())[0]
-    try:
-        totalRamount = int(totalRamounts) + int(totalRamountsAdditional)
-    except:
-        totalRamount = 0
-
-    
-    pt = Payment_Teacher.objects.filter(payment_upto__range=(start_date_parse , end_date_parse)).order_by('-payment_upto')
-    ptList = []
-    for i in pt:
-        teacher_name = Teachers.objects.get(id=i.teacher_id.id)
-        ptList.append(teacher_name.admin.first_name+" "+teacher_name.admin.last_name)
-    
-    st = FeesReport.objects.filter(paid_status=1,fees_date__range=(start_date_parse , end_date_parse))
-    stList = []
-    for i in st:
-        student_name = Students.objects.get(id=i.student_id.id)
-        stList.append(student_name.admin.first_name+" "+student_name.admin.last_name)
-    paid_st_list = []
-    for i in total_recieved:
-        student_name = Students.objects.get(id=i.student_id.id)
-        paid_st_list.append(student_name.admin.first_name+" "+student_name.admin.last_name)
-    
-    expenses = AdditionalExpenses.objects.filter(date__range=(start_date_parse , end_date_parse))
-    expensesValues = expenses.values()
-    expensesList = list(expensesValues)
-    
-    totalpaid = paymentTeacher.aggregate(Sum('payment_amount'))
-    totalpaidlists = list(totalpaid.values())[0]
-
-    totalobtained = paymentStudent.aggregate(Sum('amount'))
-    totalobtainedadditional = paymentStudent.aggregate(Sum('extra_amount'))
-    totalobtainedlists = list(totalobtained.values())[0]  
-    totaladditionaobtained = list(totalobtainedadditional.values())[0]
-    
-    totalAE = additionalExpenses.aggregate(Sum('amount'))
-    totalAElist = list(totalAE.values())[0]
-    
-    try:
-        totalobtainedlist = int(totalobtainedlists) + int(totaladditionaobtained)
+    context = {
+        "status":200,
+        "paid_amount":total_paid_amount,
+        "unpaid_amount": total_unpaid_amount,
+        "additional_expenses_amount": total_additional_expenses_amount,
+        "recieved_amount": total_recieved_amount,
+        "recievable_amount":total_recievable_amount,
+        "profit_amount":total_profit,
+        "total_expenses": total_expenses,
+        "unpaid_amount":total_unpaid_amount,
+        "teacher_payments_data" : teacher_payments_data,
+        "student_payments_data": student_payments_data,
+        "total_additional_expenses": total_additional_expenses,
+        "total_recieved_payments_data":total_recieved_payments_data,
         
-    except:
-        totalobtainedlist = 0
-        
-        
-    try:
-        totalpaidlist = int(totalpaidlists)
-    except:
-        totalpaidlist = 0
-    
-    totalAE = additionalExpenses.aggregate(Sum('amount'))
-    totalAElist = list(totalAE.values())[0]
-    
-    try:
-        totalexpenses = int(totalpaidlist) + int(totalAElist)
-    except:
-        totalexpenses = 0
 
-    
-    totalprofit = totalobtainedlist - totalexpenses
-    
-    totalUnpaid = ClassAndPayment.objects.filter(status=1 , class_date__range=(start_date_parse , end_date_parse))
-    
-    totalUnpaidAmount = totalUnpaid.aggregate(Sum('per_class_charge'))
-    totalUnpaidlists = list(totalUnpaidAmount.values())[0]
-    try:
-        totalUnpaidlist = int(totalUnpaidlists)
-    except:
-        totalUnpaidlist = 0
-    totalDueAmount = totalUnpaidlist - totalpaidlist
-
-    return JsonResponse({'status':'OK', 'ptList':ptList , 'paid_st_list':paid_st_list ,'total_recieved_list': total_recieved_list  , 'totalRecievedAmount':totalRecievedAmount , 'totalRamount' : totalRamount , 'totalDueAmount':totalDueAmount , 'totalprofit':totalprofit ,'totalobtainedlist':totalobtainedlist , 'totalexpenses':totalexpenses , 'totalAElist':totalAElist , 'totalpaidlist':totalpaidlist, 'stList':stList ,'expensesList':expensesList,'paymentStudentList':paymentStudentList ,'paymentTeacherList':paymentTeacherList})
-
+    }
+    return JsonResponse(context)
 def single_notice(request,notice_id):
     notice = Notices.objects.get(id=notice_id)
     context={
